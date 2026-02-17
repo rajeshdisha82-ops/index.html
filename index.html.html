@@ -1,0 +1,553 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LoanPro – Settings</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  /* CSS वेरिएबल्स: यहीं से सारे कलर और स्टाइल कंट्रोल होते हैं */
+  :root {
+    --main-color: #0047b3;
+    --background-color: #e6f7ff;
+    --text-font-size: 18px;
+    --font-color: #000;
+    --highlight-color: #fffa90;
+    --font-family: 'Roboto', Arial, sans-serif;
+    --table-background: #000;
+    --table-header: #222;
+    --table-font-color: #fff;
+    --grand-total-color: #ff0;
+    --grand-total-background: transparent;
+    --checkbox-on: #28a745;
+    --checkbox-off: #dc3545;
+    --checkbox-dim: #ffc107;
+    /* ग्रेडिएंट वेरिएबल्स को जावास्क्रिप्ट से सेट किया जाएगा */
+  }
+
+  .total-box {
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.8; /* स्पेसिंग बढ़ाई गई */
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    background-color: var(--grand-total-background);
+    box-sizing: border-box;
+  }
+
+  /* ⭐ वर्टिकल लेआउट के लिए नया स्टाइल */
+  .total-box span {
+    display: block; /* हर आइटम को नई लाइन पर दिखाएगा */
+    font-size: 22px; /* फॉन्ट साइज बढ़ाया गया */
+    margin-bottom: 8px; /* लाइनों के बीच गैप */
+  }
+
+  .total-box b {
+    font-size: 35px;
+    display: block; /* इसे भी ब्लॉक बनाया गया */
+  }
+
+  #result b {
+    font-size: 30px;
+  }
+
+  .invoice-details {
+    text-align: center;
+  }
+  .invoice-details span {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  @keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  .blink { animation: blink 1s infinite; }
+
+  @keyframes glow {
+    0%   { text-shadow: 0 0 5px currentColor; }
+    50%  { text-shadow: 0 0 25px currentColor, 0 0 40px currentColor; }
+    100% { text-shadow: 0 0 5px currentColor; }
+  }
+  .glow { animation: glow 1.2s infinite; }
+
+  body {
+    background: var(--background-color);
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 10px;
+    font-size: var(--text-font-size);
+    color: var(--font-color);
+  }
+
+  body.dark { background: #111; color: #eee; }
+  body.dark .box { background: #1e1e1e; }
+
+  .box {
+    max-width: 520px;
+    margin: auto;
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    margin-bottom: 12px;
+  }
+
+  h2, h3, h4 { text-align: center; color: var(--main-color); }
+
+  input, button, select, label {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    font-size: var(--text-font-size);
+    border-radius: 8px;
+    border: 1px solid #444;
+    box-sizing: border-box;
+    font-family: var(--font-family);
+  }
+
+  input:focus {
+    border-color: var(--main-color);
+    background: var(--highlight-color);
+  }
+
+  button {
+    /* ⭐ ग्रेडिएंट अब जावास्क्रिप्ट से लागू होगा */
+    background: var(--blue-gradient, linear-gradient(135deg, #0a58ff, #0047b3));
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-top: 6px;
+    font-weight: 600;
+    transition: background .3s;
+  }
+
+  button:hover {
+    background: var(--blue-gradient-hover, linear-gradient(135deg, #0047b3, #0a58ff));
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: var(--table-background);
+    color: var(--table-font-color);
+  }
+
+  th, td { border: 1px solid #777; padding: 6px; text-align: center; }
+  th { background: var(--table-header); }
+  #summary b { color: var(--grand-total-color); }
+  .hidden { display: none; }
+
+  .checkbox-label { display: flex; align-items: center; cursor: pointer; }
+  .checkbox-label input[type=checkbox] {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--checkbox-dim);
+  }
+  .checkbox-label input[type=checkbox]:checked { accent-color: var(--checkbox-on); }
+
+  #result { margin-top: 10px; padding: 5px; border-radius: 8px; }
+  .vertical-buttons { display: flex; flex-direction: column; gap: 6px; }
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h2>LoanPro</h2>
+  <input id="billInput" placeholder="Bill No (R1234 / Y1234)">
+  <input id="amtInput" type="number" placeholder="Loan Amount">
+  <input id="dtInput" type="text" inputmode="numeric" placeholder="DD/MM/YYYY">
+  <input id="paidInput" type="number" placeholder="Paid Months">
+  <button id="calcBtn">CALCULATE</button>
+  <div id="result"></div>
+  <button onclick="addLoan()">➕ ADD LOAN</button>
+</div>
+
+<div class="box">
+  <h3>Loan Table</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Bill No</th>
+        <th>Loan</th>
+        <th>Due Months</th>
+        <th>Interest</th>
+        <th>Total</th>
+        <th>✖</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div id="summary"></div>
+  <div class="vertical-buttons">
+    <button onclick="openPay()">PAY (GPAY)</button>
+    <button onclick="sendWhatsApp()">WHATSAPP</button>
+    <button onclick="printInvoice()">PRINT INVOICE</button>
+  </div>
+</div>
+
+<div class="box">
+  <button onclick="admin()">⚙ ADMIN SETTINGS</button>
+  <div id="settings" class="hidden">
+    <h4>Admin Settings</h4>
+    <label>Google Sheet Apps Script URL</label>
+    <input id="billUrlInput" placeholder="Apps Script Web App URL">
+    <label class="checkbox-label"><input type="checkbox" id="fetchOnInput"> Enable Sheet Push</label>
+    <hr>
+    <label>Notice/SMS Bulk URL</label>
+    <input id="noticeUrlInput" placeholder="Notice/SMS URL">
+    <label class="checkbox-label"><input type="checkbox" id="noticeOnInput"> Enable Bulk SMS</label>
+    <button onclick="sendBulkNotice()">SEND BULK NOTICE</button>
+    <hr>
+    <label class="checkbox-label">
+      <input type="checkbox" id="interestOnInput"> Interest Formula ON / OFF
+    </label>
+    <label>Interest Mode</label>
+    <select id="intModeInput">
+      <option value="two">Two Rate</option>
+      <option value="one">Single Rate</option>
+      <option value="off">No Interest</option>
+    </select>
+    <label>Interest ≤6 months %</label><input id="r1Input" type="number">
+    <label>Interest >6 months %</label><input id="r2Input" type="number">
+    <hr>
+    <label>Main Theme Color</label><input type="color" id="mainColorInput">
+    <label>Highlight Color</label><input type="color" id="highlightColorInput">
+    <label>Invoice Font Size (px)</label><input type="number" id="invoiceFontInput">
+    <label>Invoice Font Color</label><input type="color" id="invoiceColorInput">
+    <label>Invoice Background Color</label><input type="color" id="invoiceBgInput">
+    <label class="checkbox-label"><input type="checkbox" id="darkOnInput"> Dark Mode</label>
+    <hr>
+    <label>Font Family</label>
+    <select id="fontFamilyInput">
+      <option value="Arial, sans-serif">Arial</option>
+      <option value="'Arial Black', Gadget, sans-serif">Arial Black</option>
+      <option value="'Verdana', sans-serif">Verdana</option>
+      <option value="'Tahoma', sans-serif">Tahoma</option>
+      <option value="'Courier New', monospace">Courier New</option>
+      <option value="'Times New Roman', serif">Times New Roman</option>
+    </select>
+    <hr>
+    <label>Extra Charge Amount (₹)</label><input id="extraValInput" type="number">
+    <label class="checkbox-label"><input type="checkbox" id="extraOnInput"> Enable Extra Charge</label>
+    <hr>
+    <h4>Loan Table Colors</h4>
+    <label>Table Background</label><input type="color" id="tableBgInput">
+    <label>Table Header Color</label><input type="color" id="tableHeaderInput">
+    <label>Table Font Color</label><input type="color" id="tableFontInput">
+    <label>Grand Total Font Color</label><input type="color" id="grandColorInput">
+    <label>Grand Total Background Color</label><input type="color" id="grandBgColorInput">
+    <hr>
+    <h4>Blue Guardian Gradient</h4>
+    <label>Gradient Start Color</label><input type="color" id="gradStartInput">
+    <label>Gradient End Color</label><input type="color" id="gradEndInput">
+    <hr>
+    <label>Change Admin Password</label>
+    <input id="newPassInput" type="password" placeholder="Enter new password">
+    <button onclick="saveSettings()">SAVE SETTINGS</button>
+  </div>
+</div>
+
+<script>
+  // ===== GLOBAL VARIABLES & DEFAULTS =====
+  let loans = [], cur = null;
+  
+  const defaults = {
+    pass: "1234",
+    r1: 1.25,
+    r2: 1.75,
+    intMode: "two",
+    interestOn: "true",
+    mainColor: "#0047b3",
+    highlightColor: "#fffa90",
+    invoiceFont: 18,
+    invoiceColor: "#0f0",
+    invoiceBg: "#000",
+    dark: "false",
+    tableBg: "#000",
+    tableHeader: "#222",
+    tableFont: "#fff",
+    grandColor: "#ff0",
+    grandBgColor: "transparent",
+    fontFamily: "Arial, sans-serif",
+    extraOn: "true",
+    extraVal: 10,
+    billUrl: "",
+    fetchOn: "true",
+    noticeUrl: "",
+    noticeOn: "true",
+    gradStart: "#0a58ff",
+    gradEnd: "#0047b3"
+  };
+
+  function getSetting(key) {
+    return localStorage.getItem(key) ?? defaults[key];
+  }
+
+  // ===== THEME APPLICATION =====
+  function applyTheme() {
+    const root = document.documentElement;
+    root.style.setProperty("--main-color", getSetting('mainColor'));
+    root.style.setProperty("--highlight-color", getSetting('highlightColor'));
+    root.style.setProperty("--table-background", getSetting('tableBg'));
+    root.style.setProperty("--table-header", getSetting('tableHeader'));
+    root.style.setProperty("--table-font-color", getSetting('tableFont'));
+    root.style.setProperty("--grand-total-color", getSetting('grandColor'));
+    root.style.setProperty("--grand-total-background", getSetting('grandBgColor'));
+    root.style.setProperty("--font-family", getSetting('fontFamily'));
+    
+    // ⭐ ग्रेडिएंट कलर को जावास्क्रिप्ट से सेट किया जा रहा है
+    const gradStart = getSetting('gradStart');
+    const gradEnd = getSetting('gradEnd');
+    root.style.setProperty("--blue-gradient", `linear-gradient(135deg, ${gradStart}, ${gradEnd})`);
+    root.style.setProperty("--blue-gradient-hover", `linear-gradient(135deg, ${gradEnd}, ${gradStart})`);
+    
+    document.body.classList.toggle("dark", getSetting('dark') === "true");
+  }
+
+  // ===== ELEMENTS =====
+  const billInput = document.getElementById('billInput');
+  const amtInput = document.getElementById('amtInput');
+  const dtInput = document.getElementById('dtInput');
+  const paidInput = document.getElementById('paidInput');
+  const calcBtn = document.getElementById('calcBtn');
+  const rows = document.getElementById('rows');
+  const summary = document.getElementById('summary');
+  const focusables = [billInput, amtInput, dtInput, paidInput, calcBtn];
+
+  // ===== DATE INPUT AUTO FORMAT =====
+  dtInput.addEventListener("input", function() {
+    let pos = this.selectionStart;
+    let v = this.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 4) v = `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
+    else if (v.length > 2) v = `${v.slice(0, 2)}/${v.slice(2)}`;
+    this.value = v;
+    if (pos === 3 || pos === 6) pos++;
+    this.setSelectionRange(pos, pos);
+  });
+
+  // ===== AUTO CALC + ENTER + JUMP =====
+  focusables.forEach((el, idx) => {
+    el.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        focusables[(idx + 1) % focusables.length].focus();
+        if (el === paidInput || el === calcBtn) calc();
+      }
+    });
+    el.addEventListener("input", calc);
+  });
+
+  // ===== CALCULATION =====
+  function parseDate(s) { const [d, m, y] = s.split("/"); return new Date(y, m - 1, d); }
+  
+  function getTotalMonths(start, today) {
+    if (today < start) return 0;
+    let months = (today.getFullYear() - start.getFullYear()) * 12 + (today.getMonth() - start.getMonth());
+    if (today.getDate() >= start.getDate()) months++;
+    return Math.max(0, months);
+  }
+
+  function calc() {
+    if(!dtInput.value || !amtInput.value) return;
+
+    const start = parseDate(dtInput.value);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const totalMonths = getTotalMonths(start, today);
+    let paid = +paidInput.value || 0;
+    if(paid > totalMonths) paid = totalMonths;
+
+    const due = totalMonths - paid;
+    const amt = +amtInput.value || 0;
+    let interest = 0;
+
+    if (getSetting('interestOn') === "true") {
+      const intModeVal = getSetting('intMode');
+      const r1v = +getSetting('r1');
+      const r2v = +getSetting('r2');
+      
+      if (intModeVal === "two") {
+        const m1 = Math.min(due, Math.max(0, 6 - paid));
+        const m2 = due - m1;
+        interest = (amt * m1 * r1v / 100) + (amt * m2 * r2v / 100);
+      } else if (intModeVal === "one") {
+        interest = amt * due * r2v / 100;
+      }
+      
+      if (getSetting('extraOn') === "true" && due >= 6) {
+        interest += +getSetting('extraVal');
+      }
+    } 
+
+    const total = amt + interest;
+    cur = { a: amt, m: due, i: interest, total, bill: billInput.value || 'N/A' };
+
+    document.getElementById("result").innerHTML = `
+      <div style="
+        background:${getSetting('invoiceBg')};
+        color:${getSetting('invoiceColor')};
+        font-size:${getSetting('invoiceFont')}px;
+        font-family:${getSetting('fontFamily')};
+        padding:10px;
+        text-align:center;
+      ">
+        <div class="invoice-details">
+            <span>Date: ${dtInput.value}</span>
+            <span>Total Months: ${totalMonths} | Paid: ${paid} | Due: ${due}</span>
+            <span>Loan: ₹${amt}</span>
+            <span>Interest: ₹${interest.toFixed(2)}</span>
+            <b class="blink glow">Total: ₹${total.toFixed(2)}</b>
+        </div>
+      </div>
+    `;
+  }
+
+  // ===== TABLE =====
+  function addLoan() {
+    if (!cur) return;
+    loans.push(cur);
+    render();
+    
+    billInput.value = '';
+    amtInput.value = '';
+    dtInput.value = '';
+    paidInput.value = '';
+    document.getElementById("result").innerHTML = '';
+    cur = null;
+    billInput.focus();
+  }
+
+  function render() {
+    rows.innerHTML = "";
+    let totalLoan = 0;
+    let totalInterest = 0;
+    loans.forEach((l, i) => {
+      totalLoan += l.a;
+      totalInterest += l.i;
+      rows.innerHTML += `<tr>
+        <td>${l.bill}</td>
+        <td>${l.a}</td>
+        <td>${l.m}</td>
+        <td>${l.i.toFixed(2)}</td>
+        <td>${l.total.toFixed(2)}</td>
+        <td><button onclick="del(${i})">✖</button></td>
+      </tr>`;
+    });
+
+    // ⭐ बदला हुआ वर्टिकल ग्रैंड टोटल लेआउट
+    summary.innerHTML = `
+      <div class="total-box">
+        <span>Loan: ₹${totalLoan.toFixed(2)}</span>
+        <span>Interest: ₹${totalInterest.toFixed(2)}</span>
+        <b class="blink glow">Grand Total: ₹${(totalLoan + totalInterest).toFixed(2)}</b>
+      </div>
+    `;
+  }
+
+  function del(i){ loans.splice(i,1); render(); }
+
+  // ===== ADMIN SETTINGS =====
+  function admin() {
+    const entered = prompt("Enter Admin Password:");
+    if (entered === getSetting('pass')) {
+      document.getElementById("settings").classList.toggle("hidden");
+      
+      Object.keys(defaults).forEach(key => {
+        const input = document.getElementById(key + 'Input');
+        if (input) {
+          input.type === 'checkbox' ? input.checked = (getSetting(key) === 'true') : input.value = getSetting(key);
+        }
+      });
+      document.getElementById('newPassInput').value = "";
+    } else {
+      alert("Incorrect password!");
+    }
+  }
+  
+  function saveSettings() {
+    if (document.getElementById('newPassInput').value) {
+        localStorage.setItem('pass', document.getElementById('newPassInput').value);
+    }
+
+    Object.keys(defaults).forEach(key => {
+      const input = document.getElementById(key + 'Input');
+      if (input) {
+        localStorage.setItem(key, input.type === 'checkbox' ? input.checked : input.value);
+      }
+    });
+
+    applyTheme(); // थीम को फिर से लागू करें
+    alert("Settings Saved!");
+    document.getElementById("settings").classList.add("hidden");
+  }
+
+  // ===== GOOGLE SHEET PUSH =====
+  let billTimer = null;
+  billInput.addEventListener("input", () => {
+    clearTimeout(billTimer);
+    billTimer = setTimeout(() => {
+      if (getSetting('fetchOn') === 'true' && billInput.value.trim().length >= 3) {
+        fetchBillFromSheet();
+      }
+    }, 600);
+  });
+
+  function fetchBillFromSheet() {
+    const billUrlVal = getSetting('billUrl');
+    if (!billUrlVal.trim()) return console.warn("Google Sheet URL not set.");
+
+    const billVal = billInput.value.trim();
+    if (!billVal) return;
+
+    fetch(`${billUrlVal}?bill=${encodeURIComponent(billVal)}`)
+      .then(r => r.text())
+      .then(t => {
+        try {
+          const data = JSON.parse(t);
+          amtInput.value = data.amount;
+          dtInput.value = data.date;
+          calc();
+        } catch (e) {
+          alert("Error parsing data from sheet.");
+        }
+      })
+      .catch(err => console.error("Fetch failed:", err));
+  }
+
+  // ===== OTHER ACTIONS =====
+  function sendBulkNotice() { 
+    if (getSetting('noticeOn') !== 'true' || !getSetting('noticeUrl')) return alert("Enable Bulk SMS and set URL");
+    fetch(getSetting('noticeUrl')).then(r => r.text()).then(t => alert(`Bulk notice sent! Response: ${t}`)); 
+  }
+
+  function openPay() { 
+    const total = loans.reduce((s, l) => s + l.total, 0); 
+    if (!total) return alert("No amount to pay"); 
+    window.open(`upi://pay?pa=yourupi@bank&am=${total.toFixed(2)}&cu=INR`); 
+  }
+
+  function sendWhatsApp() {
+    if (loans.length === 0) return alert("No loans added!");
+    let msg = loans.map(l => `-------------------------\nBill No: ${l.bill}\nLoan: ₹${l.a}\nDue Months: ${l.m}\nInterest: ₹${l.i.toFixed(2)}\n*Total: ₹${l.total.toFixed(2)}*\n-------------------------`).join('\n\n');
+    const grand = loans.reduce((s, l) => s + l.total, 0).toFixed(2);
+    msg += `\n\n*Grand Total: ₹${grand}*`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg  )}`);
+  }
+
+  function printInvoice() { window.print(); }
+
+  calcBtn.onclick = calc;
+
+  // ===== INITIALIZE APP =====
+  document.addEventListener('DOMContentLoaded', applyTheme);
+</script>
+
+</body>
+</html>
