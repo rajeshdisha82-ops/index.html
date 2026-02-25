@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LoanPro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<script>
+(function(){
+  var s=localStorage,r=document.documentElement;
+  function g(k,d){return s.getItem(k)||d;}
+  r.style.setProperty('--mc',g('mainColor','#0047b3'));
+  r.style.setProperty('--bg',g('bgColor','#e6f7ff'));
+  r.style.setProperty('--tbg',g('tableBg','#000'));
+  r.style.setProperty('--thd',g('tableHeader','#222'));
+  r.style.setProperty('--tfc',g('tableFont','#fff'));
+  r.style.setProperty('--gtc',g('grandColor','#ff0'));
+  r.style.setProperty('--lic',g('loanInterestColor','#ff0'));
+  r.style.setProperty('--ltc',g('loanTotalColor','#fff'));
+  r.style.setProperty('--gtbg',g('grandBgColor','#111'));
+  r.style.setProperty('--b1',g('blinkColor1','#ffff00'));
+  r.style.setProperty('--b2',g('blinkColor2','#ff0000'));
+  r.style.setProperty('--hc1',g('hoverColor1','#00ff00'));
+  r.style.setProperty('--hc2',g('hoverColor2','#ffff00'));
+  r.style.setProperty('--spd',g('blinkSpeed','1000')+'ms');
+  r.style.setProperty('--ff',g('fontFamily',"'Rajdhani',sans-serif"));
+  r.style.setProperty('--grad','linear-gradient(135deg,'+g('gradStart','#0a58ff')+','+g('gradEnd','#0047b3')+')');
+  r.style.setProperty('--dateColor',g('dateColor','#ffab40'));
+  r.style.setProperty('--billIc', g('billInputColor','#0047b3'));
+  r.style.setProperty('--amtIc',  g('amtInputColor','#28a745'));
+  r.style.setProperty('--dtIc',   g('dtInputColor','#ffab40'));
+  if(g('dark','false')==='true')r.classList.add('dark-pre');
+})();
+</script>
+<style>
+:root{--mc:#0047b3;--bg:#e6f7ff;--fc:#000;--hi:#fffa90;--ff:'Rajdhani',sans-serif;--tbg:#000;--thd:#222;--tfc:#fff;--gtc:#ff0;--lic:#ff0;--ltc:#fff;--gtbg:#111;--grad:linear-gradient(135deg,#0a58ff,#0047b3);--b1:#ffff00;--b2:#ff0000;--hc1:#00ff00;--hc2:#ffff00;--spd:1s;--dateColor:#ffab40;--billIc:#0047b3;--amtIc:#28a745;--dtIc:#ffab40;}
+html{background:var(--bg);}
+html.dark-pre,html.dark-pre body{background:#0d0d0d!important;color:#eee!important;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);font-family:var(--ff);padding:10px;font-size:16px;color:var(--fc);}
+body.dark{background:#0d0d0d;color:#eee;}
+body.dark .box{background:#141414;border-color:#2a2a2a;}
+body.dark input,body.dark select{background:#1e1e1e;color:#eee;border-color:#444;}
+body.dark label{color:#aaa;}
+body.dark hr{border-color:rgba(255,255,255,.08);}
+.box{max-width:540px;margin:auto;background:#fff;padding:18px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.13);margin-bottom:14px;border:1px solid #e0e0e0;}
+.mode-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:10px;}
+.mode-badge.admin{background:linear-gradient(135deg,#ff6f00,#e65100);color:#fff;}
+.mode-badge.public{background:linear-gradient(135deg,#28a745,#1a7a30);color:#fff;}
+h2{text-align:center;color:var(--mc);font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;letter-spacing:2px;margin-bottom:10px;}
+h3{text-align:center;color:var(--mc);font-size:18px;font-weight:700;margin-bottom:10px;}
+h4{text-align:center;color:var(--mc);font-size:14px;margin:8px 0;}
+input,select{width:100%;padding:11px 13px;margin-top:7px;font-size:15px;border-radius:10px;border:1.5px solid #ccc;font-family:var(--ff);}
+input:focus{border-color:var(--mc);background:var(--hi);outline:none;}
+#billInput{border-color:var(--billIc)!important;box-shadow:0 0 0 0 var(--billIc);}
+#amtInput{border-color:var(--amtIc)!important;}
+#dtInput{border-color:var(--dtIc)!important;}
+#billInput:focus{box-shadow:0 0 8px 2px var(--billIc);}
+#amtInput:focus{box-shadow:0 0 8px 2px var(--amtIc);}
+#dtInput:focus{box-shadow:0 0 8px 2px var(--dtIc);}
+button{width:100%;padding:12px;margin-top:8px;font-size:15px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-family:var(--ff);background:var(--grad);color:#fff;transition:opacity .15s,transform .1s;}
+button:hover{opacity:.87;transform:translateY(-1px);}
+button:active{transform:translateY(0);}
+.green-btn{background:linear-gradient(135deg,#28a745,#1a7a30)!important;}
+.orange-btn{background:linear-gradient(135deg,#ff9800,#e65100)!important;}
+.red-btn{background:linear-gradient(135deg,#f44336,#b71c1c)!important;}
+.yellow-btn{background:linear-gradient(135deg,#ffc107,#ff8f00)!important;color:#000!important;}
+label{display:block;font-size:13px;color:#555;margin-top:10px;font-weight:700;}
+.chk{display:flex;align-items:center;gap:9px;margin-top:10px;cursor:pointer;}
+.chk input[type=checkbox]{width:20px;height:20px;margin:0;accent-color:#28a745;flex-shrink:0;}
+.chk span{font-size:14px;font-weight:600;}
+.vbtns{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+hr{margin:14px 0;border:none;border-top:2px solid rgba(0,0,0,.08);}
+.hidden{display:none!important;}
+table{width:100%;border-collapse:collapse;margin-top:10px;background:var(--tbg);color:var(--tfc);border-radius:10px;overflow:hidden;}
+th,td{border:1px solid rgba(255,255,255,.12);padding:8px 5px;text-align:center;font-size:13px;}
+th{background:var(--thd);font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:background .18s,color .18s;}
+th:hover{filter:brightness(1.5);}
+tbody td{position:relative;overflow:hidden;cursor:pointer;transition:color .1s;}
+[class*="chm-"]{color:#fff;font-weight:700;}
+[class*="chm-"] *{position:relative;z-index:2;}
+
+
+/* =====================================================================
+   100 CELL HOVER MODES
+   Formula: td{position:relative;overflow:hidden}
+            ::before / ::after = position:absolute invisible layer
+            background: linear-gradient → colour
+            animation: translateX/Y → sweep movement
+            JS mouseenter → add class  |  mouseleave → remove class
+   ===================================================================== */
+
+/* ── KEYFRAMES ── */
+/* Horizontal sweeps */
+@keyframes h_lr{0%{transform:translateX(-110%)}100%{transform:translateX(110%)}}
+@keyframes h_rl{0%{transform:translateX(110%)}100%{transform:translateX(-110%)}}
+/* Vertical sweeps */
+@keyframes v_tb{0%{transform:translateY(-110%)}100%{transform:translateY(110%)}}
+@keyframes v_bt{0%{transform:translateY(110%)}100%{transform:translateY(-110%)}}
+/* Diagonal */
+@keyframes d_dr{0%{transform:translate(-110%,-110%)}100%{transform:translate(110%,110%)}}
+@keyframes d_dl{0%{transform:translate(110%,-110%)}100%{transform:translate(-110%,110%)}}
+@keyframes d_ur{0%{transform:translate(-110%,110%)}100%{transform:translate(110%,-110%)}}
+@keyframes d_ul{0%{transform:translate(110%,110%)}100%{transform:translate(-110%,-110%)}}
+/* Pulse / flash */
+@keyframes pulse{0%,100%{opacity:0}50%{opacity:1}}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes strobe{0%,19%,38%,57%,76%{opacity:0}9%,28%,47%,66%,85%{opacity:1}}
+/* Scale */
+@keyframes sc_out{0%{transform:translate(-50%,-50%) scale(0);opacity:.8}80%{transform:translate(-50%,-50%) scale(1.6);opacity:.2}100%{transform:translate(-50%,-50%) scale(2);opacity:0}}
+/* Bounce */
+@keyframes bnc{0%,100%{transform:translateX(0)}30%{transform:translateX(60%)}60%{transform:translateX(40%)}80%{transform:translateX(90%)}}
+/* Wipe fill */
+@keyframes wipe_l{0%{width:0}100%{width:100%}}
+@keyframes wipe_r{0%{right:0;width:0}100%{width:100%}}
+@keyframes wipe_t{0%{height:0}100%{height:100%}}
+@keyframes wipe_b{0%{bottom:0;height:0}100%{height:100%}}
+/* Clip reveal */
+@keyframes clip_ud{0%{clip-path:inset(50% 0 50% 0)}100%{clip-path:inset(0 0 0 0)}}
+@keyframes clip_lr{0%{clip-path:inset(0 50% 0 50%)}100%{clip-path:inset(0 0 0 0)}}
+/* Skew sweeps */
+@keyframes sk_l{0%{transform:translateX(-120%) skewX(-20deg)}100%{transform:translateX(120%) skewX(-20deg)}}
+@keyframes sk_r{0%{transform:translateX(120%) skewX(20deg)}100%{transform:translateX(-120%) skewX(20deg)}}
+@keyframes sk_t{0%{transform:translateY(-120%) skewY(-10deg)}100%{transform:translateY(120%) skewY(-10deg)}}
+@keyframes sk_b{0%{transform:translateY(120%) skewY(10deg)}100%{transform:translateY(-120%) skewY(-10deg)}}
+/* Heartbeat */
+@keyframes hbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.12)}28%{transform:scale(1)}42%{transform:scale(1.1)}}
+/* Rotate spin */
+@keyframes rot{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+/* Bg gradient wave */
+@keyframes bgwave{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes bgwaveV{0%{background-position:50% 0%}50%{background-position:50% 100%}100%{background-position:50% 0%}}
+/* Invert */
+@keyframes inv{0%,100%{filter:invert(0)}50%{filter:invert(1)}}
+/* Shake */
+@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* Glitch blocks */
+@keyframes glitch{0%,100%{clip-path:inset(0 0 95% 0)}25%{clip-path:inset(30% 0 50% 0)}50%{clip-path:inset(60% 0 10% 0)}75%{clip-path:inset(10% 0 80% 0)}}
+/* Scrolling stripes */
+@keyframes stripes{0%{background-position:0 0}100%{background-position:40px 0}}
+@keyframes stripesV{0%{background-position:0 0}100%{background-position:0 40px}}
+/* Border glow */
+@keyframes bglow{0%,100%{opacity:0;box-shadow:inset 0 0 0 0 transparent}50%{opacity:1;box-shadow:inset 0 0 18px 4px var(--hc1)}}
+/* Explode from center */
+@keyframes exp{0%{transform:translate(-50%,-50%) scale(0);opacity:1}100%{transform:translate(-50%,-50%) scale(3);opacity:0}}
+/* Split bars from center outward */
+@keyframes spl_l{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+@keyframes spl_r{0%{transform:translateX(0)}100%{transform:translateX(100%)}}
+@keyframes spl_t{0%{transform:translateY(0)}100%{transform:translateY(-100%)}}
+@keyframes spl_b{0%{transform:translateY(0)}100%{transform:translateY(100%)}}
+/* Plasma */
+@keyframes plasma{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+/* Neon border chase */
+@keyframes bchase{0%{box-shadow:inset 2px 0 6px var(--hc1),inset 0 0 0 transparent}25%{box-shadow:inset 0 2px 6px var(--hc1),inset 0 0 0 transparent}50%{box-shadow:inset -2px 0 6px var(--hc2),inset 0 0 0 transparent}75%{box-shadow:inset 0 -2px 6px var(--hc2)}100%{box-shadow:inset 2px 0 6px var(--hc1)}}
+/* Star */
+@keyframes star{0%{transform:translate(-50%,-50%) scale(0) rotate(0deg);opacity:1}100%{transform:translate(-50%,-50%) scale(2) rotate(360deg);opacity:0}}
+
+/* ── BASE CELL ── */
+tbody td{position:relative;overflow:hidden;cursor:pointer;}
+[class*="chm-"]::before,[class*="chm-"]::after{content:'';position:absolute;pointer-events:none;z-index:1;}
+[class*="chm-"] *{position:relative;z-index:2;}
+
+/* ── GROUP 1: LEFT→RIGHT SWEEPS (1–10) ── */
+/* 1. Thin gradient bar L→R */
+.chm-1::before{top:0;left:0;height:100%;width:35%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:h_lr .7s ease-in-out infinite;}
+/* 2. Wide gradient bar L→R */
+.chm-2::before{top:0;left:0;height:100%;width:65%;background:linear-gradient(90deg,transparent,var(--hc1) 40%,var(--hc2),transparent);animation:h_lr .8s ease-in-out infinite;}
+/* 3. Neon line L→R */
+.chm-3::before{top:0;left:0;height:100%;width:4px;background:var(--hc1);box-shadow:0 0 12px 5px var(--hc1);animation:h_lr .55s linear infinite;}
+/* 4. Double neon lines L→R */
+.chm-4::before{top:0;left:0;height:100%;width:3px;background:var(--hc1);box-shadow:0 0 8px 4px var(--hc1);animation:h_lr .55s linear infinite;}
+.chm-4::after{top:0;left:0;height:100%;width:3px;background:var(--hc2);box-shadow:0 0 8px 4px var(--hc2);animation:h_lr .55s .27s linear infinite;}
+/* 5. Skew bar L→R */
+.chm-5::before{top:0;left:0;height:100%;width:40%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);transform:skewX(-15deg);animation:h_lr .7s linear infinite;}
+/* 6. Rainbow sweep L→R */
+.chm-6::before{top:0;left:0;height:100%;width:55%;background:linear-gradient(90deg,transparent,#f00,#f70,#ff0,#0f0,#0ff,#00f,transparent);animation:h_lr .9s linear infinite;}
+/* 7. Shimmer glitter L→R */
+.chm-7::before{top:0;left:0;height:100%;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),var(--hc1),transparent);animation:sk_l .65s linear infinite;}
+/* 8. Bounce sweep L→R */
+.chm-8::before{top:0;left:0;height:100%;width:35%;background:linear-gradient(90deg,transparent,var(--hc2),transparent);animation:bnc .9s ease-in-out infinite;}
+/* 9. Dual color bar L→R */
+.chm-9::before{top:0;left:0;height:100%;width:50%;background:linear-gradient(90deg,var(--hc1) 0%,var(--hc2) 100%);animation:h_lr .7s ease-in-out infinite;opacity:.85;}
+/* 10. Color wipe fill from left */
+.chm-10::before{top:0;left:0;height:100%;width:0;background:linear-gradient(90deg,var(--hc1),var(--hc2));animation:wipe_l .6s ease-out infinite;}
+
+/* ── GROUP 2: RIGHT→LEFT SWEEPS (11–20) ── */
+/* 11. Thin gradient bar R→L */
+.chm-11::before{top:0;right:0;height:100%;width:35%;background:linear-gradient(270deg,transparent,var(--hc2),transparent);animation:h_rl .7s ease-in-out infinite;}
+/* 12. Wide bar R→L */
+.chm-12::before{top:0;right:0;height:100%;width:65%;background:linear-gradient(270deg,transparent,var(--hc2) 40%,var(--hc1),transparent);animation:h_rl .8s ease-in-out infinite;}
+/* 13. Neon line R→L */
+.chm-13::before{top:0;right:0;height:100%;width:4px;background:var(--hc2);box-shadow:0 0 12px 5px var(--hc2);animation:h_rl .55s linear infinite;}
+/* 14. Double neon lines R→L */
+.chm-14::before{top:0;right:0;height:100%;width:3px;background:var(--hc2);box-shadow:0 0 8px 4px var(--hc2);animation:h_rl .55s linear infinite;}
+.chm-14::after{top:0;right:0;height:100%;width:3px;background:var(--hc1);box-shadow:0 0 8px 4px var(--hc1);animation:h_rl .55s .27s linear infinite;}
+/* 15. Skew bar R→L */
+.chm-15::before{top:0;right:0;height:100%;width:40%;background:linear-gradient(270deg,transparent,var(--hc2),transparent);transform:skewX(15deg);animation:h_rl .7s linear infinite;}
+/* 16. Rainbow R→L */
+.chm-16::before{top:0;right:0;height:100%;width:55%;background:linear-gradient(270deg,transparent,#f00,#f70,#ff0,#0f0,#0ff,#00f,transparent);animation:h_rl .9s linear infinite;}
+/* 17. Shimmer R→L */
+.chm-17::before{top:0;right:0;height:100%;width:30%;background:linear-gradient(270deg,transparent,rgba(255,255,255,.9),var(--hc2),transparent);animation:sk_r .65s linear infinite;}
+/* 18. Wipe fill from right */
+.chm-18::before{top:0;right:0;height:100%;width:0;background:linear-gradient(270deg,var(--hc2),var(--hc1));animation:wipe_r .6s ease-out infinite;}
+/* 19. Dual split: L bar + R bar toward center */
+.chm-19::before{top:0;left:0;height:100%;width:50%;background:linear-gradient(90deg,var(--hc1),transparent);transform-origin:left;animation:spl_l .7s ease-in-out infinite;}
+.chm-19::after{top:0;right:0;height:100%;width:50%;background:linear-gradient(270deg,var(--hc2),transparent);transform-origin:right;animation:spl_r .7s ease-in-out infinite;}
+/* 20. Mirror bars from edges to center simultaneously */
+.chm-20::before{top:0;left:50%;height:100%;width:50%;background:linear-gradient(90deg,var(--hc1),transparent);animation:spl_r .7s ease-in-out infinite;}
+.chm-20::after{top:0;right:50%;height:100%;width:50%;background:linear-gradient(270deg,var(--hc2),transparent);animation:spl_l .7s ease-in-out infinite;}
+
+/* ── GROUP 3: TOP→BOTTOM SWEEPS (21–30) ── */
+/* 21. Thin bar T→B */
+.chm-21::before{top:0;left:0;width:100%;height:35%;background:linear-gradient(180deg,transparent,var(--hc1),transparent);animation:v_tb .7s ease-in-out infinite;}
+/* 22. Wide bar T→B */
+.chm-22::before{top:0;left:0;width:100%;height:65%;background:linear-gradient(180deg,transparent,var(--hc1) 40%,var(--hc2),transparent);animation:v_tb .8s ease-in-out infinite;}
+/* 23. Neon line T→B */
+.chm-23::before{top:0;left:0;width:100%;height:4px;background:var(--hc1);box-shadow:0 0 12px 5px var(--hc1);animation:v_tb .55s linear infinite;}
+/* 24. Double neon lines T→B */
+.chm-24::before{top:0;left:0;width:100%;height:4px;background:var(--hc1);box-shadow:0 0 8px 4px var(--hc1);animation:v_tb .55s linear infinite;}
+.chm-24::after{top:0;left:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 8px 4px var(--hc2);animation:v_tb .55s .27s linear infinite;}
+/* 25. Skew T→B */
+.chm-25::before{top:0;left:0;width:100%;height:40%;background:linear-gradient(180deg,transparent,var(--hc1),transparent);transform:skewY(-5deg);animation:v_tb .7s linear infinite;}
+/* 26. Rainbow T→B */
+.chm-26::before{top:0;left:0;width:100%;height:55%;background:linear-gradient(180deg,transparent,#f00,#f70,#ff0,#0f0,#0ff,#00f,transparent);animation:v_tb .9s linear infinite;}
+/* 27. Shimmer T→B */
+.chm-27::before{top:0;left:0;width:100%;height:30%;background:linear-gradient(180deg,transparent,rgba(255,255,255,.9),var(--hc1),transparent);animation:sk_t .65s linear infinite;}
+/* 28. Wipe fill from top */
+.chm-28::before{top:0;left:0;width:100%;height:0;background:linear-gradient(180deg,var(--hc1),var(--hc2));animation:wipe_t .6s ease-out infinite;}
+/* 29. Dual split bars outward T+B */
+.chm-29::before{top:0;left:0;width:100%;height:50%;background:linear-gradient(180deg,var(--hc1),transparent);transform-origin:top;animation:spl_t .7s ease-in-out infinite;}
+.chm-29::after{bottom:0;left:0;width:100%;height:50%;background:linear-gradient(0deg,var(--hc2),transparent);transform-origin:bottom;animation:spl_b .7s ease-in-out infinite;}
+/* 30. Mirror from center→T and center→B */
+.chm-30::before{top:50%;left:0;width:100%;height:50%;background:linear-gradient(180deg,var(--hc1),transparent);animation:spl_b .7s ease-in-out infinite;}
+.chm-30::after{bottom:50%;left:0;width:100%;height:50%;background:linear-gradient(0deg,var(--hc2),transparent);animation:spl_t .7s ease-in-out infinite;}
+
+/* ── GROUP 4: BOTTOM→TOP SWEEPS (31–40) ── */
+/* 31. Thin bar B→T */
+.chm-31::before{bottom:0;left:0;width:100%;height:35%;background:linear-gradient(0deg,transparent,var(--hc2),transparent);animation:v_bt .7s ease-in-out infinite;}
+/* 32. Wide bar B→T */
+.chm-32::before{bottom:0;left:0;width:100%;height:65%;background:linear-gradient(0deg,transparent,var(--hc2) 40%,var(--hc1),transparent);animation:v_bt .8s ease-in-out infinite;}
+/* 33. Neon line B→T */
+.chm-33::before{bottom:0;left:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 12px 5px var(--hc2);animation:v_bt .55s linear infinite;}
+/* 34. Double neon lines B→T */
+.chm-34::before{bottom:0;left:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 8px 4px var(--hc2);animation:v_bt .55s linear infinite;}
+.chm-34::after{bottom:0;left:0;width:100%;height:4px;background:var(--hc1);box-shadow:0 0 8px 4px var(--hc1);animation:v_bt .55s .27s linear infinite;}
+/* 35. Skew B→T */
+.chm-35::before{bottom:0;left:0;width:100%;height:40%;background:linear-gradient(0deg,transparent,var(--hc2),transparent);transform:skewY(5deg);animation:v_bt .7s linear infinite;}
+/* 36. Rainbow B→T */
+.chm-36::before{bottom:0;left:0;width:100%;height:55%;background:linear-gradient(0deg,transparent,#f00,#f70,#ff0,#0f0,#0ff,#00f,transparent);animation:v_bt .9s linear infinite;}
+/* 37. Shimmer B→T */
+.chm-37::before{bottom:0;left:0;width:100%;height:30%;background:linear-gradient(0deg,transparent,rgba(255,255,255,.9),var(--hc2),transparent);animation:sk_b .65s linear infinite;}
+/* 38. Wipe fill from bottom */
+.chm-38::before{bottom:0;left:0;width:100%;height:0;background:linear-gradient(0deg,var(--hc2),var(--hc1));animation:wipe_b .6s ease-out infinite;}
+/* 39. T+B neon bars sweep toward center */
+.chm-39::before{top:0;left:0;width:100%;height:4px;background:var(--hc1);box-shadow:0 0 10px 4px var(--hc1);animation:v_tb .65s linear infinite;}
+.chm-39::after{bottom:0;left:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 10px 4px var(--hc2);animation:v_bt .65s linear infinite;}
+/* 40. T+B bars meeting: color1 from top + color2 from bottom */
+.chm-40::before{top:0;left:0;width:100%;height:50%;background:linear-gradient(180deg,var(--hc1),transparent);animation:v_tb .7s ease-in-out infinite;}
+.chm-40::after{bottom:0;left:0;width:100%;height:50%;background:linear-gradient(0deg,var(--hc2),transparent);animation:v_bt .7s ease-in-out infinite;}
+
+/* ── GROUP 5: DOUBLE BLINK UP+DOWN (41–55) ── */
+/* 41. Both bars from T+B meeting at center (slow) */
+.chm-41::before{top:-100%;left:0;width:100%;height:55%;background:linear-gradient(180deg,transparent,var(--hc1),transparent);animation:v_tb .9s ease-in-out infinite;}
+.chm-41::after{bottom:-100%;left:0;width:100%;height:55%;background:linear-gradient(0deg,transparent,var(--hc2),transparent);animation:v_bt .9s ease-in-out infinite;}
+/* 42. Both bars T+B (fast) */
+.chm-42::before{top:0;left:0;width:100%;height:45%;background:linear-gradient(180deg,var(--hc1),transparent);animation:v_tb .45s linear infinite;}
+.chm-42::after{bottom:0;left:0;width:100%;height:45%;background:linear-gradient(0deg,var(--hc2),transparent);animation:v_bt .45s linear infinite;}
+/* 43. Color1 top / color2 bottom alternating flash */
+.chm-43::before{top:0;left:0;width:100%;height:50%;background:var(--hc1);animation:pulse .5s step-end infinite;}
+.chm-43::after{bottom:0;left:0;width:100%;height:50%;background:var(--hc2);animation:pulse2 .5s step-end infinite;}
+/* 44. Top neon bar down + bottom neon bar up simultaneously */
+.chm-44::before{top:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,transparent,var(--hc1),transparent);box-shadow:0 0 10px 3px var(--hc1);animation:v_tb .6s linear infinite;}
+.chm-44::after{bottom:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,transparent,var(--hc2),transparent);box-shadow:0 0 10px 3px var(--hc2);animation:v_bt .6s linear infinite;}
+/* 45. Gradient fill T+B inward */
+.chm-45::before{top:0;left:0;width:100%;height:50%;background:linear-gradient(180deg,var(--hc1) 0%,transparent 100%);animation:pulse .6s ease-in-out infinite;}
+.chm-45::after{bottom:0;left:0;width:100%;height:50%;background:linear-gradient(0deg,var(--hc2) 0%,transparent 100%);animation:pulse2 .6s ease-in-out infinite;}
+/* 46. Both halves blink alternately (solid) */
+.chm-46::before{top:0;left:0;width:100%;height:50%;background:var(--hc1);animation:pulse .55s ease-in-out infinite;}
+.chm-46::after{bottom:0;left:0;width:100%;height:50%;background:var(--hc2);animation:pulse .55s .27s ease-in-out infinite;}
+/* 47. T→B slow + B→T fast */
+.chm-47::before{top:0;left:0;width:100%;height:40%;background:linear-gradient(180deg,var(--hc1),transparent);animation:v_tb 1.1s ease-in-out infinite;}
+.chm-47::after{bottom:0;left:0;width:100%;height:40%;background:linear-gradient(0deg,var(--hc2),transparent);animation:v_bt .45s linear infinite;}
+/* 48. Vertical plasma wave (both colors morph) */
+.chm-48::before{inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2),var(--hc1));background-size:100% 300%;animation:bgwaveV 1.2s ease infinite;}
+/* 49. Vertical color chase gradient scrolls */
+.chm-49::before{inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2),var(--hc1));background-size:100% 200%;animation:bgwaveV .7s linear infinite;}
+/* 50. Explode+drip: top drip down + bottom drip up + pulse */
+.chm-50::before{top:0;left:0;width:100%;height:50%;background:linear-gradient(180deg,var(--hc1),transparent);animation:v_tb .55s ease-in-out infinite;}
+.chm-50::after{bottom:0;left:0;width:100%;height:50%;background:linear-gradient(0deg,var(--hc2),transparent);animation:v_bt .55s ease-in-out infinite;}
+
+/* ── GROUP 6: DIAGONAL SWEEPS (51–60) ── */
+/* 51. Diagonal ↘ */
+.chm-51::before{top:-50%;left:-50%;width:50%;height:200%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:d_dr .85s linear infinite;}
+/* 52. Diagonal ↙ */
+.chm-52::before{top:-50%;right:-50%;width:50%;height:200%;background:linear-gradient(90deg,transparent,var(--hc2),transparent);animation:d_dl .85s linear infinite;}
+/* 53. Diagonal ↗ */
+.chm-53::before{bottom:-50%;left:-50%;width:50%;height:200%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:d_ur .85s linear infinite;}
+/* 54. Diagonal ↖ */
+.chm-54::before{bottom:-50%;right:-50%;width:50%;height:200%;background:linear-gradient(90deg,transparent,var(--hc2),transparent);animation:d_ul .85s linear infinite;}
+/* 55. X-cross: ↘ + ↙ simultaneously */
+.chm-55::before{top:-50%;left:-30%;width:35%;height:200%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:d_dr .8s linear infinite;}
+.chm-55::after{top:-50%;right:-30%;width:35%;height:200%;background:linear-gradient(90deg,transparent,var(--hc2),transparent);animation:d_dl .8s linear infinite;}
+/* 56. Diagonal skew ↘ fat */
+.chm-56::before{top:-50%;left:-50%;width:70%;height:200%;background:linear-gradient(90deg,transparent,var(--hc1) 30%,var(--hc2) 70%,transparent);animation:d_dr .9s linear infinite;}
+/* 57. Double diagonal same direction */
+.chm-57::before{top:-50%;left:-50%;width:30%;height:200%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:d_dr .7s linear infinite;}
+.chm-57::after{top:-50%;left:-50%;width:20%;height:200%;background:linear-gradient(90deg,transparent,var(--hc2),transparent);animation:d_dr .7s .35s linear infinite;}
+/* 58. Rainbow diagonal ↘ */
+.chm-58::before{top:-50%;left:-50%;width:55%;height:200%;background:linear-gradient(90deg,transparent,#f00,#ff0,#0f0,#0ff,transparent);animation:d_dr .9s linear infinite;}
+/* 59. Diagonal ↘ + ↗ (V-cross) */
+.chm-59::before{top:-50%;left:-30%;width:35%;height:200%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:d_dr .8s linear infinite;}
+.chm-59::after{bottom:-50%;left:-30%;width:35%;height:200%;background:linear-gradient(90deg,transparent,var(--hc2),transparent);animation:d_ur .8s linear infinite;}
+/* 60. Diagonal neon line ↘ */
+.chm-60::before{top:-50%;left:-50%;width:4px;height:200%;background:var(--hc1);box-shadow:0 0 12px 5px var(--hc1);animation:d_dr .6s linear infinite;}
+
+/* ── GROUP 7: FLASH & PULSE (61–70) ── */
+/* 61. Solid color flash hc1 */
+.chm-61::before{inset:0;background:var(--hc1);animation:pulse .55s ease-in-out infinite;}
+/* 62. Solid flash hc2 */
+.chm-62::before{inset:0;background:var(--hc2);animation:pulse .55s ease-in-out infinite;}
+/* 63. Alternating hc1↔hc2 flash */
+.chm-63::before{inset:0;background:var(--hc1);animation:pulse .5s ease-in-out infinite;}
+.chm-63::after{inset:0;background:var(--hc2);animation:pulse2 .5s ease-in-out infinite;}
+/* 64. Strobe flash */
+.chm-64::before{inset:0;background:var(--hc1);animation:strobe .4s step-end infinite;}
+/* 65. Triple flash (hc1+white+hc2) */
+.chm-65::before{inset:0;background:var(--hc1);animation:strobe .35s step-end infinite;}
+.chm-65::after{inset:0;background:var(--hc2);animation:strobe .35s .17s step-end infinite;}
+/* 66. Heartbeat scale */
+.chm-66{animation:hbeat .75s ease-in-out infinite!important;}
+.chm-66::before{inset:0;background:linear-gradient(135deg,var(--hc1),var(--hc2));opacity:.5;}
+/* 67. Inset border glow pulse */
+.chm-67{animation:bglow .7s ease-in-out infinite!important;}
+/* 68. Neon border chase */
+.chm-68{animation:bchase .8s linear infinite!important;}
+/* 69. Invert flash */
+.chm-69{animation:inv .6s ease-in-out infinite!important;}
+/* 70. Shake X with color */
+.chm-70{animation:shk .35s ease-in-out infinite!important;}
+.chm-70::before{inset:0;background:linear-gradient(90deg,var(--hc1),var(--hc2));opacity:.5;}
+
+/* ── GROUP 8: RADIAL & BURST (71–80) ── */
+/* 71. Radial burst from center */
+.chm-71::before{top:50%;left:50%;width:12px;height:12px;margin:-6px 0 0 -6px;background:var(--hc1);border-radius:50%;animation:sc_out .8s ease-out infinite;}
+/* 72. Big radial burst */
+.chm-72::before{top:50%;left:50%;width:20px;height:20px;margin:-10px 0 0 -10px;background:var(--hc1);border-radius:50%;animation:exp .85s ease-out infinite;}
+/* 73. Double radial */
+.chm-73::before{top:50%;left:50%;width:10px;height:10px;margin:-5px 0 0 -5px;background:var(--hc1);border-radius:50%;animation:exp .7s ease-out infinite;}
+.chm-73::after{top:50%;left:50%;width:10px;height:10px;margin:-5px 0 0 -5px;background:var(--hc2);border-radius:50%;animation:exp .7s .35s ease-out infinite;}
+/* 74. Star burst */
+.chm-74::before{content:'★';top:50%;left:50%;font-size:20px;color:var(--hc1);animation:star .75s ease-out infinite;}
+/* 75. Spinning ring */
+.chm-75::before{top:50%;left:50%;width:80%;height:80%;margin:-40% 0 0 -40%;border:3px solid var(--hc1);border-radius:50%;animation:rot .8s linear infinite;}
+/* 76. Spinning bar */
+.chm-76::before{top:50%;left:50%;width:150%;height:4px;margin:0 0 0 -75%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:rot .7s linear infinite;}
+/* 77. Plasma glow (hue rotate) */
+.chm-77::before{inset:0;background:linear-gradient(135deg,var(--hc1),var(--hc2));animation:plasma 1s linear infinite;opacity:.6;}
+/* 78. Glitch strips */
+.chm-78::before{inset:0;background:var(--hc1);animation:glitch .4s step-end infinite;}
+/* 79. Scrolling H stripes */
+.chm-79::before{inset:0;background:repeating-linear-gradient(90deg,var(--hc1) 0,var(--hc1) 8px,var(--hc2) 8px,var(--hc2) 16px,transparent 16px,transparent 20px);animation:stripes .35s linear infinite;opacity:.7;}
+/* 80. Scrolling V stripes */
+.chm-80::before{inset:0;background:repeating-linear-gradient(180deg,var(--hc1) 0,var(--hc1) 8px,var(--hc2) 8px,var(--hc2) 16px,transparent 16px,transparent 20px);animation:stripesV .35s linear infinite;opacity:.7;}
+
+/* ── GROUP 9: GRADIENT WAVES (81–90) ── */
+/* 81. Horizontal gradient wave */
+.chm-81::before{inset:0;background:linear-gradient(90deg,var(--hc1),var(--hc2),var(--hc1));background-size:200%;animation:bgwave .9s linear infinite;}
+/* 82. Vertical gradient wave */
+.chm-82::before{inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2),var(--hc1));background-size:100% 200%;animation:bgwaveV .9s linear infinite;}
+/* 83. Diagonal gradient wave */
+.chm-83::before{inset:0;background:linear-gradient(135deg,var(--hc1),var(--hc2),var(--hc1));background-size:200% 200%;animation:bgwave 1s linear infinite;}
+/* 84. Clip reveal LR */
+.chm-84::before{inset:0;background:linear-gradient(90deg,var(--hc1),var(--hc2));animation:clip_lr .6s ease-out infinite;}
+/* 85. Clip reveal UD */
+.chm-85::before{inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2));animation:clip_ud .6s ease-out infinite;}
+/* 86. Horizontal gradient wave fast */
+.chm-86::before{inset:0;background:linear-gradient(90deg,var(--hc1),var(--hc2),var(--hc1));background-size:300%;animation:bgwave .5s linear infinite;}
+/* 87. Vertical rainbow wave */
+.chm-87::before{inset:0;background:linear-gradient(180deg,#f00,#f70,#ff0,#0f0,#0ff,#00f,#f0f);background-size:100% 400%;animation:bgwaveV 1.2s linear infinite;}
+/* 88. Diagonal rainbow wave */
+.chm-88::before{inset:0;background:linear-gradient(135deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);background-size:400% 400%;animation:bgwave 1.5s linear infinite;}
+/* 89. Double horizontal wave */
+.chm-89::before{inset:0;background:linear-gradient(90deg,var(--hc1),transparent,var(--hc2),transparent,var(--hc1));background-size:300%;animation:bgwave .7s linear infinite;}
+/* 90. Double vertical wave */
+.chm-90::before{inset:0;background:linear-gradient(180deg,var(--hc1),transparent,var(--hc2),transparent,var(--hc1));background-size:100% 300%;animation:bgwaveV .7s linear infinite;}
+
+/* ── GROUP 10: MAXIMUM COMBOS (91–100) ── */
+/* 91. LR sweep + TB sweep together */
+.chm-91::before{top:0;left:0;height:100%;width:35%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:h_lr .6s ease-in-out infinite;}
+.chm-91::after{top:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,transparent,var(--hc2),transparent);box-shadow:0 0 8px 3px var(--hc2);animation:v_tb .6s linear infinite;}
+/* 92. 4-side neon border glow + inner pulse */
+.chm-92{animation:bglow .6s ease-in-out infinite!important;}
+.chm-92::before{top:0;left:0;width:100%;height:4px;background:var(--hc1);box-shadow:0 0 10px 4px var(--hc1);animation:v_tb .5s linear infinite;}
+.chm-92::after{bottom:0;left:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 10px 4px var(--hc2);animation:v_bt .5s linear infinite;}
+/* 93. L+R neon lines + T+B neon lines */
+.chm-93::before{top:0;left:0;height:100%;width:4px;background:var(--hc1);box-shadow:0 0 10px 5px var(--hc1);animation:h_lr .5s linear infinite;}
+.chm-93::after{top:0;left:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 10px 5px var(--hc2);animation:v_tb .5s linear infinite;}
+/* 94. Diagonal X + pulse */
+.chm-94::before{top:-50%;left:-30%;width:35%;height:200%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:d_dr .7s linear infinite;}
+.chm-94::after{top:-50%;right:-30%;width:35%;height:200%;background:linear-gradient(90deg,transparent,var(--hc2),transparent);animation:d_dl .7s linear infinite;}
+/* 95. LR sweep + vertical gradient wave */
+.chm-95::before{top:0;left:0;height:100%;width:40%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:h_lr .65s ease-in-out infinite;}
+.chm-95::after{inset:0;background:linear-gradient(180deg,var(--hc2),transparent,var(--hc2));background-size:100% 200%;animation:bgwaveV .9s linear infinite;opacity:.4;}
+/* 96. Double T+B drip + scrolling stripes */
+.chm-96::before{top:0;left:0;width:100%;height:5px;background:var(--hc1);box-shadow:0 0 12px 5px var(--hc1);animation:v_tb .55s linear infinite;}
+.chm-96::after{inset:0;background:repeating-linear-gradient(90deg,var(--hc2) 0,var(--hc2) 4px,transparent 4px,transparent 12px);animation:stripes .3s linear infinite;opacity:.35;}
+/* 97. Explode + T+B neon */
+.chm-97::before{top:50%;left:50%;width:14px;height:14px;margin:-7px 0 0 -7px;background:var(--hc1);border-radius:50%;animation:exp .7s ease-out infinite;}
+.chm-97::after{top:0;left:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 10px 4px var(--hc2);animation:v_tb .55s linear infinite;}
+/* 98. Rainbow H + Rainbow V simultaneously */
+.chm-98::before{top:0;left:0;height:100%;width:50%;background:linear-gradient(90deg,transparent,#f00,#ff0,#0f0,transparent);animation:h_lr .75s linear infinite;}
+.chm-98::after{top:0;left:0;width:100%;height:50%;background:linear-gradient(180deg,transparent,#0ff,#00f,#f0f,transparent);animation:v_tb .75s linear infinite;opacity:.7;}
+/* 99. All: LR neon + diagonal + pulse */
+.chm-99::before{top:0;left:0;height:100%;width:4px;background:var(--hc1);box-shadow:0 0 12px 6px var(--hc1);animation:h_lr .5s linear infinite;}
+.chm-99::after{top:-50%;left:-30%;width:35%;height:200%;background:linear-gradient(90deg,transparent,var(--hc2),transparent);animation:d_dr .6s linear infinite;}
+/* 100. MAXIMUM: LR + TB + diagonal + pulse + border glow */
+.chm-100{animation:bglow .5s ease-in-out infinite!important;}
+.chm-100::before{top:0;left:0;height:100%;width:4px;background:var(--hc1);box-shadow:0 0 14px 6px var(--hc1);animation:h_lr .45s linear infinite;}
+.chm-100::after{top:0;left:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 14px 6px var(--hc2);animation:v_tb .45s linear infinite;}
+
+/* ===== 30 GRAND TOTAL BLINK MODES ===== */
+@keyframes b1{0%,49%,100%{opacity:1}50%,99%{opacity:0}}
+@keyframes b2{0%,100%{opacity:1}50%{opacity:.05}}
+@keyframes b3{0%,100%{color:var(--b1)}50%{color:var(--b2)}}
+@keyframes b4{0%,100%{text-shadow:0 0 5px currentColor}50%{text-shadow:0 0 35px currentColor,0 0 70px currentColor}}
+@keyframes b5{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes b6{0%,100%{background:transparent}50%{background:var(--b2);border-radius:6px;padding:0 10px;}}
+@keyframes b7{0%,100%{letter-spacing:1px;color:var(--b1)}50%{letter-spacing:6px;color:var(--b2)}}
+@keyframes b8{0%,12%,24%,36%,100%{opacity:1}6%,18%,30%{opacity:0}}
+@keyframes b9{0%{color:var(--b1)}25%{color:#f60}50%{color:var(--b2)}75%{color:#0f8}100%{color:var(--b1)}}
+@keyframes b10{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes b11{0%,100%{filter:brightness(1)}25%{filter:brightness(4)saturate(4)}75%{filter:brightness(2)hue-rotate(90deg)}}
+@keyframes b12{0%{color:var(--b1);text-shadow:0 0 10px var(--b1)}50%{color:var(--b2);text-shadow:0 0 35px var(--b2),0 0 65px var(--b2)}100%{color:var(--b1)}}
+@keyframes b13{0%,100%{transform:scale(1)rotate(0)}33%{transform:scale(1.15)rotate(-2deg)}66%{transform:scale(.9)rotate(2deg)}}
+@keyframes b14{0%,100%{border-radius:4px;background:transparent}50%{border-radius:50px;background:var(--b1);color:#000;padding:0 14px;}}
+@keyframes b15{0%{text-shadow:0 0 0}25%{text-shadow:3px 3px 0 var(--b2),-3px -3px 0 var(--b1)}50%{text-shadow:0 0 25px var(--b1),0 0 55px var(--b2)}75%{text-shadow:-3px 3px 0 var(--b2),3px -3px 0 var(--b1)}100%{text-shadow:0 0 0}}
+@keyframes b16{0%,100%{transform:skewX(0)}40%{transform:skewX(-8deg)}70%{transform:skewX(4deg)}}
+@keyframes b17{0%,100%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(180deg)brightness(1.8)}}
+@keyframes b18{0%,100%{transform:scale(1)}20%{transform:scale(1.3)}40%{transform:scale(.85)}60%{transform:scale(1.15)}}
+@keyframes b19{0%,100%{color:var(--b1);text-shadow:0 0 0}50%{color:#fff;text-shadow:0 0 12px var(--b1),0 0 35px var(--b1),0 0 70px var(--b2)}}
+@keyframes b20{0%{transform:perspective(400px)rotateY(0)}50%{transform:perspective(400px)rotateY(18deg)}100%{transform:perspective(400px)rotateY(0)}}
+@keyframes b21{0%{background:var(--b1);color:#000;box-shadow:0 0 25px var(--b1)}50%{background:var(--b2);color:#fff;box-shadow:0 0 55px var(--b2)}100%{background:var(--b1);color:#000}}
+@keyframes b22{0%,100%{filter:drop-shadow(0 0 0 transparent)}50%{filter:drop-shadow(0 0 18px var(--b1))drop-shadow(0 0 35px var(--b2))}}
+@keyframes b23{0%,100%{transform:translateY(0)}20%{transform:translateY(-10px)}40%{transform:translateY(5px)}60%{transform:translateY(-5px)}}
+@keyframes b24{0%,100%{opacity:1;filter:blur(0)}50%{opacity:.15;filter:blur(4px)}}
+@keyframes b25{0%,100%{transform:scale(1,1)}25%{transform:scale(1.2,.8)}50%{transform:scale(.8,1.2)}75%{transform:scale(1.1,.9)}}
+@keyframes b26{0%,100%{color:var(--b1);font-weight:900}50%{color:var(--b2);font-weight:400;letter-spacing:5px}}
+@keyframes b27{0%{filter:contrast(1)}33%{filter:contrast(3)brightness(1.5)saturate(5)}66%{filter:contrast(.5)brightness(2)}100%{filter:contrast(1)}}
+@keyframes b28{0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+@keyframes b29{0%,100%{transform:scaleX(1)}30%{transform:scaleX(1.2)}60%{transform:scaleX(.85)}}
+@keyframes b30{0%{color:var(--b1);transform:scale(1)rotate(0);filter:brightness(1)}20%{color:#fff;transform:scale(1.2)rotate(-3deg);filter:brightness(3)}40%{color:var(--b2);transform:scale(.9)rotate(3deg)}60%{color:#0f0;transform:scale(1.1)rotate(-1deg)}80%{color:#f0f;transform:scale(1.05)}100%{color:var(--b1);transform:scale(1);filter:brightness(1)}}
+.bm-1{animation:b1 var(--spd) step-end infinite;}
+.bm-2{animation:b2 var(--spd) ease-in-out infinite;}
+.bm-3{animation:b3 var(--spd) ease-in-out infinite;}
+.bm-4{animation:b4 var(--spd) ease-in-out infinite;}
+.bm-5{animation:b5 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-6{animation:b6 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-7{animation:b7 var(--spd) ease-in-out infinite;}
+.bm-8{animation:b8 var(--spd) infinite;}
+.bm-9{animation:b9 calc(var(--spd)*2) linear infinite;}
+.bm-10{animation:b10 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-11{animation:b11 var(--spd) ease-in-out infinite;}
+.bm-12{animation:b12 var(--spd) linear infinite;}
+.bm-13{animation:b13 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-14{animation:b14 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-15{animation:b15 calc(var(--spd)*1.5) ease-in-out infinite;}
+.bm-16{animation:b16 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-17{animation:b17 calc(var(--spd)*2) linear infinite;}
+.bm-18{animation:b18 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-19{animation:b19 var(--spd) ease-in-out infinite;}
+.bm-20{animation:b20 calc(var(--spd)*2) ease-in-out infinite;display:inline-block;}
+.bm-21{animation:b21 var(--spd) ease-in-out infinite;display:inline-block;padding:2px 10px;border-radius:8px;}
+.bm-22{animation:b22 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-23{animation:b23 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-24{animation:b24 var(--spd) ease-in-out infinite;}
+.bm-25{animation:b25 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-26{animation:b26 var(--spd) ease-in-out infinite;}
+.bm-27{animation:b27 var(--spd) ease-in-out infinite;}
+.bm-28{animation:b28 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-29{animation:b29 var(--spd) ease-in-out infinite;display:inline-block;}
+.bm-30{animation:b30 var(--spd) ease-in-out infinite;display:inline-block;}
+
+.total-box{text-align:center;padding:16px;border-radius:12px;margin-top:10px;background:var(--gtbg);}
+.loan-total{display:block;font-size:18px;color:var(--ltc);margin-bottom:4px;font-weight:700;}
+.loan-interest{display:block;font-size:18px;color:var(--lic);margin-bottom:4px;font-weight:700;}
+.grand-total{display:block;font-size:30px;font-weight:900;color:var(--gtc);font-family:'Orbitron',sans-serif;}
+
+.sw-panel{background:#1a1a2e;border:2px solid #0047b3;border-radius:12px;padding:14px;margin-top:8px;}
+.sw-title{color:#7eb3ff;font-size:14px;font-weight:700;margin-bottom:10px;}
+.sw-row{display:flex;align-items:center;justify-content:space-between;background:#0d0d1a;border-radius:9px;padding:10px 14px;margin-top:8px;gap:10px;}
+.sw-info{flex:1;}.sw-label{color:#eee;font-size:13px;font-weight:700;}.sw-desc{color:#888;font-size:11px;margin-top:2px;}
+.toggle{position:relative;width:48px;height:26px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle .slider{position:absolute;cursor:pointer;inset:0;background:#555;border-radius:26px;transition:.3s;}
+.toggle .slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
+.toggle input:checked+.slider{background:#28a745;}
+.toggle input:checked+.slider:before{transform:translateX(22px);}
+.toggle-status{font-size:11px;font-weight:700;min-width:28px;color:#aaa;text-align:center;}
+.toggle-status.on{color:#4caf50;}
+.anim-panel{background:#0d0d1a;border:2px solid #7c4dff;border-radius:12px;padding:16px;margin-top:8px;}
+.anim-panel .sw-title{color:#ce93d8;}
+.preview-box{background:#000;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px;text-align:center;margin-top:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
+.preview-text{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--b1);}
+.preview-cell{background:var(--tbg);color:var(--tfc);border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:10px 22px;font-size:15px;font-weight:700;position:relative;overflow:hidden;display:inline-block;margin-top:8px;}
+.color-row{display:flex;gap:8px;align-items:center;margin-top:8px;}
+.color-row label{margin:0;flex:1;font-size:12px;}
+.color-row input[type=color]{width:46px;height:36px;padding:2px;margin-top:0;border-radius:6px;border:1px solid #555;cursor:pointer;flex-shrink:0;}
+.info{border-radius:8px;padding:10px 13px;font-size:13px;margin:7px 0;line-height:1.7;border-left:4px solid;}
+.info-b{background:#e3f2fd;border-color:#1976d2;color:#1565c0;}
+.info-p{background:#f3e5f5;border-color:#9c27b0;color:#6a1b9a;}
+.sync-bar{font-size:12px;padding:8px 12px;border-radius:8px;margin-top:8px;text-align:center;display:none;font-weight:700;}
+.s-ok{background:#e8f5e9;color:#2e7d32;display:block!important;}
+.s-err{background:#ffebee;color:#c62828;display:block!important;}
+.s-load{background:#e3f2fd;color:#1565c0;display:block!important;}
+.script-cell{background:#f3e5f5;border:2px solid #9c27b0;border-radius:12px;padding:14px;margin-top:8px;}
+.share-box{background:#e8f5e9;border:2px solid #28a745;border-radius:12px;padding:14px;margin-top:8px;}
+.share-url{background:#fff;border:1px solid #bbb;border-radius:6px;padding:8px;font-size:12px;word-break:break-all;color:#0047b3;margin:7px 0;}
+.bill-fetch-status{font-size:12px;padding:5px 10px;border-radius:6px;margin-top:5px;display:none;font-weight:700;}
+.bf-ok{background:#e8f5e9;color:#2e7d32;display:block!important;}
+.bf-load{background:#e3f2fd;color:#1565c0;display:block!important;}
+.autofill-tag{display:inline-block;background:#0047b3;color:#fff;font-size:10px;border-radius:10px;padding:1px 8px;margin-left:6px;vertical-align:middle;}
+.snd-card{border:2px solid #e0e0e0;border-radius:10px;padding:10px;margin-top:10px;background:#fafafa;}
+.snd-title{font-size:13px;font-weight:700;margin-bottom:6px;}
+.snd-tabs{display:flex;flex-wrap:wrap;gap:3px;margin:5px 0;}
+.snd-tab{padding:3px 8px;border-radius:14px;border:1px solid #ccc;background:#f5f5f5;color:#333;font-size:11px;cursor:pointer;width:auto;margin-top:0;}
+.snd-tab.active{background:var(--mc);color:#fff;}
+.snd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-height:120px;overflow-y:auto;margin-top:4px;}
+.snd-btn{padding:3px 2px;font-size:10px;border-radius:5px;background:#f0f4ff;border:1px solid #c5d0ff;color:#333;cursor:pointer;width:100%;margin-top:0;}
+.snd-btn.sel{background:#0047b3;color:#fff;}
+.sel-lbl{font-size:11px;color:#555;padding:3px 8px;background:#f9f9f9;border-radius:4px;border:1px solid #ddd;display:block;margin-top:3px;}
+.mp3r{display:flex;gap:5px;margin-top:5px;align-items:center;}
+.mp3r input{flex:1;margin-top:0;font-size:12px;padding:7px;}
+.mp3r button{width:auto;margin-top:0;padding:7px 10px;font-size:11px;}
+.mp3s{font-size:11px;padding:3px 8px;border-radius:4px;margin-top:3px;display:none;}
+.mp3-ok{background:#e8f5e9;color:#2e7d32;display:block!important;}
+.mp3-err{background:#ffebee;color:#c62828;display:block!important;}
+.bsbox{background:#fff8e1;border:2px solid #ffc107;border-radius:12px;padding:13px;margin-top:10px;}
+.bsrow{display:grid;grid-template-columns:1fr 2fr auto auto;gap:5px;align-items:center;margin-top:7px;}
+.bsrow input{margin-top:0;padding:7px;font-size:12px;}
+.bsrow button{width:auto;margin-top:0;padding:7px 8px;font-size:11px;}
+.bslist{margin-top:8px;max-height:160px;overflow-y:auto;}
+.bsitem{display:grid;grid-template-columns:1fr 2fr auto auto;gap:5px;align-items:center;padding:5px;border-radius:7px;background:#fff;border:1px solid #ddd;margin-top:4px;}
+.bsitem span{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bsno{font-weight:700;color:#0047b3;}
+.invoice-details span{display:block;margin-bottom:6px;}
+#result{margin-top:10px;border-radius:12px;overflow:hidden;}
+.github-box{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid #0f3460;border-radius:12px;padding:14px;margin-top:8px;}
+.github-box h4{color:#e94560;font-size:13px;margin-bottom:10px;}
+.g-step{background:rgba(255,255,255,.05);border-radius:8px;padding:8px 12px;margin-top:6px;font-size:12px;color:#aaa;border-left:3px solid #0f3460;}
+.g-step b{color:#fff;}.g-step code{background:#0f3460;color:#00d4ff;padding:1px 6px;border-radius:3px;font-size:11px;}
+/* ===== GRADIENT PICKER PANEL ===== */
+.grad-panel{background:#0d0d1a;border:2px solid #7c4dff;border-radius:12px;padding:14px;margin-top:8px;}
+.grad-panel-title{color:#ce93d8;font-size:13px;font-weight:700;margin-bottom:10px;letter-spacing:.3px;}
+.grad-swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:12px;}
+.grad-swatch{height:38px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s,box-shadow .15s;position:relative;}
+.grad-swatch:hover{transform:scale(1.08);box-shadow:0 0 10px rgba(255,255,255,.3);}
+.grad-swatch.active{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.4);}
+.grad-swatch .swatch-num{position:absolute;bottom:2px;right:4px;font-size:9px;color:rgba(255,255,255,.7);font-weight:700;text-shadow:0 1px 2px #000;}
+.grad-preview-wrap{background:rgba(255,255,255,.04);border-radius:8px;padding:10px;text-align:center;margin-bottom:10px;}
+.grad-preview-label{color:#888;font-size:11px;font-weight:700;letter-spacing:.5px;}
+.grad-custom-row{display:flex;gap:10px;margin-top:4px;}
+.grad-custom-row>div{flex:1;}
+
+/* =====================================================
+   CELL HOVER MODES 51–100: UP-DOWN SHADE DOUBLE BLINK
+   ===================================================== */
+
+/* --- KEYFRAMES --- */
+/* 51: Shade bars from top AND bottom, meet center, slow */
+@keyframes ud51t{0%{transform:translateY(-100%)}100%{transform:translateY(0%)}}
+@keyframes ud51b{0%{transform:translateY(100%)}100%{transform:translateY(0%)}}
+/* 52: Same but fast */
+@keyframes ud52t{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+@keyframes ud52b{0%{transform:translateY(100%)}100%{transform:translateY(-100%)}}
+/* 53: Dark→Light top sweep + Light→Dark bottom sweep */
+@keyframes ud53t{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+@keyframes ud53b{0%{transform:translateY(200%)}100%{transform:translateY(-100%)}}
+/* 54: Bloom from center outward up & down */
+@keyframes ud54{0%{transform:scaleY(0);transform-origin:center}100%{transform:scaleY(1);transform-origin:center}}
+/* 55: Both ends drip and meet at center */
+@keyframes ud55t{0%{top:0;height:0}50%{top:0;height:50%}100%{top:0;height:0}}
+@keyframes ud55b{0%{bottom:0;height:0}50%{bottom:0;height:50%}100%{bottom:0;height:0}}
+/* 56: From center split to top & bottom */
+@keyframes ud56{0%{clip-path:inset(50% 0 50% 0)}100%{clip-path:inset(0 0 0 0)}}
+/* 57: Shade bounce up */
+@keyframes ud57{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+/* 58: Shade bounce down */
+@keyframes ud58{0%{transform:translateY(0)}50%{transform:translateY(8px)}100%{transform:translateY(0)}}
+/* 59: Alternating top/bottom flash */
+@keyframes ud59t{0%,49%,100%{opacity:1}50%,99%{opacity:0}}
+@keyframes ud59b{0%,49%,100%{opacity:0}50%,99%{opacity:1}}
+/* 60: Cascade top to bottom */
+@keyframes ud60{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+/* 61: Reverse cascade bottom to top */
+@keyframes ud61{0%{transform:translateY(200%)}100%{transform:translateY(-100%)}}
+/* 62: Neon bar top + neon bar bottom */
+@keyframes ud62t{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+@keyframes ud62b{0%{transform:translateY(200%)}100%{transform:translateY(-100%)}}
+/* 63: Color1 top pulse / Color2 bottom pulse alternating */
+@keyframes ud63t{0%,100%{opacity:0}50%{opacity:1}}
+@keyframes ud63b{0%,100%{opacity:1}50%{opacity:0}}
+/* 64: Wipe up + fade */
+@keyframes ud64{0%{transform:translateY(100%);opacity:0}50%{opacity:1}100%{transform:translateY(-100%);opacity:0}}
+/* 65: Vertical strobe */
+@keyframes ud65{0%,19%,38%,57%,76%,95%,100%{opacity:0}10%,29%,48%,67%,86%{opacity:1}}
+/* 66: Top glow drips down */
+@keyframes ud66{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+/* 67: Bottom glow rises up */
+@keyframes ud67{0%{transform:translateY(200%)}100%{transform:translateY(-100%)}}
+/* 68: Dual glow lines from center outward */
+@keyframes ud68t{0%{transform:translateY(0%)}100%{transform:translateY(-100%)}}
+@keyframes ud68b{0%{transform:translateY(0%)}100%{transform:translateY(100%)}}
+/* 69: Ripple up+down (scale from center) */
+@keyframes ud69{0%{transform:scaleY(0);opacity:.8}80%{transform:scaleY(1.1);opacity:.3}100%{transform:scaleY(1.3);opacity:0}}
+/* 70: Heartbeat vertical */
+@keyframes ud70{0%,100%{transform:scaleY(1)}14%{transform:scaleY(1.15)}28%{transform:scaleY(1)}42%{transform:scaleY(1.12)}}
+/* 71: Vertical rainbow fill */
+@keyframes ud71{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+/* 72: Top flash + bottom flash simultaneous */
+@keyframes ud72t{0%,100%{opacity:0}30%,70%{opacity:1}}
+@keyframes ud72b{0%,100%{opacity:1}30%,70%{opacity:0}}
+/* 73: Top+bottom bars squeeze toward center */
+@keyframes ud73t{0%{height:0;top:0}50%{height:50%;top:0}100%{height:0;top:50%}}
+@keyframes ud73b{0%{height:0;bottom:0}50%{height:50%;bottom:0}100%{height:0;bottom:50%}}
+/* 74: Thin scan line moves up */
+@keyframes ud74{0%{transform:translateY(200%)}100%{transform:translateY(-200%)}}
+/* 75: Thin scan line moves down */
+@keyframes ud75{0%{transform:translateY(-200%)}100%{transform:translateY(200%)}}
+/* 76: Dual vertical neon lines (both move toward center) */
+@keyframes ud76t{0%{top:0}100%{top:50%}}
+@keyframes ud76b{0%{bottom:0}100%{bottom:50%}}
+/* 77: Top dark + bottom bright */
+@keyframes ud77{0%,100%{opacity:0}50%{opacity:1}}
+/* 78: Color morph gradient shifts vertically */
+@keyframes ud78{0%{background-position:0% 0%}50%{background-position:0% 100%}100%{background-position:0% 0%}}
+/* 79: Fill from bottom + drain from top */
+@keyframes ud79{0%{clip-path:inset(100% 0 0 0)}50%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 0 100% 0)}}
+/* 80: Double fast strobe top+bottom */
+@keyframes ud80t{0%,25%,50%,75%,100%{opacity:0}12%,37%,62%,87%{opacity:1}}
+@keyframes ud80b{0%,25%,50%,75%,100%{opacity:1}12%,37%,62%,87%{opacity:0}}
+/* 81: Vertical glitter (multiple passes) */
+@keyframes ud81{0%{transform:translateY(-100%) skewX(-5deg)}100%{transform:translateY(200%) skewX(-5deg)}}
+/* 82: Top melt down + bottom melt up */
+@keyframes ud82t{0%{top:0;height:0}50%{height:50%}100%{top:50%;height:0}}
+@keyframes ud82b{0%{bottom:0;height:0}50%{height:50%}100%{bottom:50%;height:0}}
+/* 83: Vertical plasma wave */
+@keyframes ud83{0%{background-position:50% 0%}50%{background-position:50% 100%}100%{background-position:50% 0%}}
+/* 84: Shade diagonal up-right */
+@keyframes ud84{0%{transform:translate(-100%,100%)}100%{transform:translate(100%,-100%)}}
+/* 85: Vertical mirror (top half = bottom half reflected) */
+@keyframes ud85t{0%{transform:translateY(-100%)}100%{transform:translateY(0%)}}
+@keyframes ud85b{0%{transform:translateY(100%)}100%{transform:translateY(0%)}}
+/* 86: Fast double drip */
+@keyframes ud86t{0%{transform:translateY(-100%)}50%{transform:translateY(100%)}100%{transform:translateY(-100%)}}
+@keyframes ud86b{0%{transform:translateY(100%)}50%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+/* 87: Shade explode outward from center */
+@keyframes ud87t{0%{top:50%;height:0}100%{top:0;height:50%}}
+@keyframes ud87b{0%{bottom:50%;height:0}100%{bottom:0;height:50%}}
+/* 88: Shade implode inward to center */
+@keyframes ud88t{0%{top:0;height:50%}100%{top:50%;height:0}}
+@keyframes ud88b{0%{bottom:0;height:50%}100%{bottom:50%;height:0}}
+/* 89: Bright top / dark bottom alternating */
+@keyframes ud89{0%,100%{background:linear-gradient(180deg,var(--hc1),var(--hc2))}50%{background:linear-gradient(180deg,var(--hc2),var(--hc1))}}
+/* 90: Neon waterfall double speed */
+@keyframes ud90a{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+@keyframes ud90b{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+/* 91: Up slow + down fast */
+@keyframes ud91t{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+@keyframes ud91b{0%{transform:translateY(200%)}100%{transform:translateY(-100%)}}
+/* 92: Vertical color chase */
+@keyframes ud92{0%{background-position:0% 0%;opacity:1}100%{background-position:0% 100%;opacity:1}}
+/* 93: Diagonal shade up-right */
+@keyframes ud93{0%{transform:translate(-100%,100%) rotate(-45deg)}100%{transform:translate(100%,-100%) rotate(-45deg)}}
+/* 94: Diagonal shade down-left */
+@keyframes ud94{0%{transform:translate(100%,-100%) rotate(45deg)}100%{transform:translate(-100%,100%) rotate(45deg)}}
+/* 95: Full blink hc1 */
+@keyframes ud95{0%,100%{background:var(--hc1);opacity:0}50%{opacity:.9}}
+/* 96: Full blink hc2 */
+@keyframes ud96{0%,100%{background:var(--hc2);opacity:0}50%{opacity:.9}}
+/* 97: Vertical double rainbow */
+@keyframes ud97{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+/* 98: Shade twist skew */
+@keyframes ud98t{0%{transform:translateY(-100%) skewY(-8deg)}100%{transform:translateY(200%) skewY(-8deg)}}
+@keyframes ud98b{0%{transform:translateY(200%) skewY(8deg)}100%{transform:translateY(-100%) skewY(8deg)}}
+/* 99: Triple vertical flash */
+@keyframes ud99{0%,15%,30%,45%,100%{opacity:0}8%,22%,37%{opacity:1}}
+/* 100: MAXIMUM — top+bottom+pulse+shake */
+@keyframes ud100t{0%{transform:translateY(-100%)}50%{transform:translateY(100%)}100%{transform:translateY(-100%)}}
+@keyframes ud100b{0%{transform:translateY(100%)}50%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+@keyframes ud100p{0%,100%{box-shadow:inset 0 0 0 0}50%{box-shadow:inset 0 0 20px 5px var(--hc1),inset 0 0 40px 10px var(--hc2)}}
+
+/* --- CLASS DEFINITIONS 51–100 --- */
+/* 51 */
+.chm-51::before{content:'';position:absolute;left:0;top:-100%;width:100%;height:55%;background:linear-gradient(180deg,transparent,var(--hc1),transparent);animation:ud51t .9s ease-in-out infinite;}
+.chm-51::after{content:'';position:absolute;left:0;bottom:-100%;width:100%;height:55%;background:linear-gradient(0deg,transparent,var(--hc2),transparent);animation:ud51b .9s ease-in-out infinite;}
+/* 52 */
+.chm-52::before{content:'';position:absolute;left:0;top:0;width:100%;height:45%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud52t .5s linear infinite;}
+.chm-52::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:45%;background:linear-gradient(0deg,var(--hc2),transparent);animation:ud52b .5s linear infinite;}
+/* 53 */
+.chm-53::before{content:'';position:absolute;left:0;top:0;width:100%;height:50%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud53t .7s ease-in-out infinite;}
+.chm-53::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:50%;background:linear-gradient(0deg,var(--hc1) 0%,var(--hc2) 100%);animation:ud53b .7s ease-in-out infinite;}
+/* 54 */
+.chm-54::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2));animation:ud54 .6s ease-out infinite;}
+/* 55 */
+.chm-55::before{content:'';position:absolute;left:0;width:100%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud55t .75s ease-in-out infinite;}
+.chm-55::after{content:'';position:absolute;left:0;width:100%;background:linear-gradient(0deg,var(--hc2),transparent);animation:ud55b .75s ease-in-out infinite;}
+/* 56 */
+.chm-56::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1) 50%,var(--hc2) 50%);animation:ud56 .65s ease-out infinite;}
+/* 57 */
+.chm-57{animation:ud57 .55s ease-in-out infinite!important;}
+.chm-57::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2));opacity:.6;}
+/* 58 */
+.chm-58{animation:ud58 .55s ease-in-out infinite!important;}
+.chm-58::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,var(--hc1),var(--hc2));opacity:.6;}
+/* 59 */
+.chm-59::before{content:'';position:absolute;left:0;top:0;width:100%;height:50%;background:var(--hc1);animation:ud59t .5s step-end infinite;}
+.chm-59::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:50%;background:var(--hc2);animation:ud59b .5s step-end infinite;}
+/* 60 */
+.chm-60::before{content:'';position:absolute;left:0;top:0;width:100%;height:45%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud60 .7s linear infinite;}
+/* 61 */
+.chm-61::before{content:'';position:absolute;left:0;bottom:0;width:100%;height:45%;background:linear-gradient(0deg,var(--hc2),transparent);animation:ud61 .7s linear infinite;}
+/* 62 */
+.chm-62::before{content:'';position:absolute;left:0;top:0;width:100%;height:4px;background:var(--hc1);box-shadow:0 0 10px 3px var(--hc1);animation:ud62t .6s linear infinite;}
+.chm-62::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 10px 3px var(--hc2);animation:ud62b .6s linear infinite;}
+/* 63 */
+.chm-63::before{content:'';position:absolute;left:0;top:0;width:100%;height:50%;background:var(--hc1);animation:ud63t .55s ease-in-out infinite;}
+.chm-63::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:50%;background:var(--hc2);animation:ud63b .55s ease-in-out infinite;}
+/* 64 */
+.chm-64::before{content:'';position:absolute;left:0;top:0;width:100%;height:50%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud64 .75s ease-in-out infinite;}
+/* 65 */
+.chm-65::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2));animation:ud65 .4s step-end infinite;}
+/* 66 */
+.chm-66::before{content:'';position:absolute;left:0;top:0;width:100%;height:40%;background:linear-gradient(180deg,var(--hc1) 0%,rgba(255,255,255,.8) 50%,transparent);animation:ud66 .7s ease-in-out infinite;}
+/* 67 */
+.chm-67::before{content:'';position:absolute;left:0;bottom:0;width:100%;height:40%;background:linear-gradient(0deg,var(--hc2) 0%,rgba(255,255,255,.8) 50%,transparent);animation:ud67 .7s ease-in-out infinite;}
+/* 68 */
+.chm-68::before{content:'';position:absolute;left:0;top:50%;width:100%;height:4px;background:linear-gradient(90deg,transparent,var(--hc1),transparent);box-shadow:0 0 12px 4px var(--hc1);animation:ud68t .7s ease-in-out infinite;}
+.chm-68::after{content:'';position:absolute;left:0;top:50%;width:100%;height:4px;background:linear-gradient(90deg,transparent,var(--hc2),transparent);box-shadow:0 0 12px 4px var(--hc2);animation:ud68b .7s ease-in-out infinite;}
+/* 69 */
+.chm-69::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2));animation:ud69 .7s ease-out infinite;}
+/* 70 */
+.chm-70{animation:ud70 .7s ease-in-out infinite!important;}
+.chm-70::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2));opacity:.5;}
+/* 71 */
+.chm-71::before{content:'';position:absolute;left:0;top:0;width:100%;height:55%;background:linear-gradient(180deg,#f00,#f70,#ff0,#0f0,#0ff,#00f,#f0f,transparent);animation:ud71 .9s linear infinite;}
+/* 72 */
+.chm-72::before{content:'';position:absolute;left:0;top:0;width:100%;height:50%;background:var(--hc1);animation:ud72t .5s ease-in-out infinite;}
+.chm-72::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:50%;background:var(--hc2);animation:ud72b .5s ease-in-out infinite;}
+/* 73 */
+.chm-73::before{content:'';position:absolute;left:0;width:100%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud73t .7s ease-in-out infinite;}
+.chm-73::after{content:'';position:absolute;left:0;width:100%;background:linear-gradient(0deg,var(--hc2),transparent);animation:ud73b .7s ease-in-out infinite;}
+/* 74 */
+.chm-74::before{content:'';position:absolute;left:0;top:0;width:100%;height:5px;background:linear-gradient(90deg,transparent,var(--hc1),transparent);box-shadow:0 0 8px 3px var(--hc1);animation:ud74 .6s linear infinite;}
+/* 75 */
+.chm-75::before{content:'';position:absolute;left:0;top:0;width:100%;height:5px;background:linear-gradient(90deg,transparent,var(--hc2),transparent);box-shadow:0 0 8px 3px var(--hc2);animation:ud75 .6s linear infinite;}
+/* 76 */
+.chm-76::before{content:'';position:absolute;left:0;top:0;width:100%;height:4px;background:var(--hc1);box-shadow:0 0 12px 4px var(--hc1);animation:ud76t .65s ease-in-out infinite;}
+.chm-76::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:4px;background:var(--hc2);box-shadow:0 0 12px 4px var(--hc2);animation:ud76b .65s ease-in-out infinite;}
+/* 77 */
+.chm-77::before{content:'';position:absolute;left:0;top:0;width:100%;height:50%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud77 .6s ease-in-out infinite;}
+.chm-77::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:50%;background:linear-gradient(0deg,var(--hc2),transparent);opacity:.5;animation:ud77 .6s .3s ease-in-out infinite;}
+/* 78 */
+.chm-78::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2),var(--hc1));background-size:100% 300%;animation:ud78 1.2s ease infinite;}
+/* 79 */
+.chm-79::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2));animation:ud79 .8s ease-in-out infinite;}
+/* 80 */
+.chm-80::before{content:'';position:absolute;left:0;top:0;width:100%;height:50%;background:var(--hc1);animation:ud80t .35s step-end infinite;}
+.chm-80::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:50%;background:var(--hc2);animation:ud80b .35s step-end infinite;}
+/* 81 */
+.chm-81::before{content:'';position:absolute;left:0;top:0;width:100%;height:40%;background:linear-gradient(180deg,rgba(255,255,255,.9),var(--hc1),transparent);animation:ud81 .6s linear infinite;}
+.chm-81::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:40%;background:linear-gradient(0deg,rgba(255,255,255,.9),var(--hc2),transparent);animation:ud81 .6s .3s linear infinite;}
+/* 82 */
+.chm-82::before{content:'';position:absolute;left:0;width:100%;background:var(--hc1);animation:ud82t .7s ease-in-out infinite;}
+.chm-82::after{content:'';position:absolute;left:0;width:100%;background:var(--hc2);animation:ud82b .7s ease-in-out infinite;}
+/* 83 */
+.chm-83::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2),var(--hc1));background-size:100% 400%;animation:ud83 1.5s ease infinite;}
+/* 84 */
+.chm-84::before{content:'';position:absolute;top:-50%;left:-30%;height:200%;width:35%;background:linear-gradient(90deg,transparent,var(--hc1),var(--hc2),transparent);animation:ud84 .85s linear infinite;}
+/* 85 */
+.chm-85::before{content:'';position:absolute;left:0;top:-100%;width:100%;height:55%;background:linear-gradient(180deg,transparent,var(--hc1));animation:ud85t .75s ease-in-out infinite;}
+.chm-85::after{content:'';position:absolute;left:0;bottom:-100%;width:100%;height:55%;background:linear-gradient(0deg,transparent,var(--hc2));animation:ud85b .75s ease-in-out infinite;}
+/* 86 */
+.chm-86::before{content:'';position:absolute;left:0;top:0;width:100%;height:45%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud86t .5s ease-in-out infinite;}
+.chm-86::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:45%;background:linear-gradient(0deg,var(--hc2),transparent);animation:ud86b .5s ease-in-out infinite;}
+/* 87 */
+.chm-87::before{content:'';position:absolute;left:0;top:50%;width:100%;height:0;background:var(--hc1);animation:ud87t .65s ease-out infinite;}
+.chm-87::after{content:'';position:absolute;left:0;bottom:50%;width:100%;height:0;background:var(--hc2);animation:ud87b .65s ease-out infinite;}
+/* 88 */
+.chm-88::before{content:'';position:absolute;left:0;top:0;width:100%;height:50%;background:var(--hc1);animation:ud88t .65s ease-in infinite;}
+.chm-88::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:50%;background:var(--hc2);animation:ud88b .65s ease-in infinite;}
+/* 89 */
+.chm-89::before{content:'';position:absolute;inset:0;animation:ud89 .6s ease-in-out infinite;}
+/* 90 */
+.chm-90::before{content:'';position:absolute;left:0;top:0;width:100%;height:35%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud90a .45s linear infinite;}
+.chm-90::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:35%;background:linear-gradient(0deg,var(--hc2),transparent);animation:ud90b .45s .22s linear infinite;}
+/* 91 */
+.chm-91::before{content:'';position:absolute;left:0;top:0;width:100%;height:45%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud91t 1.1s ease-in-out infinite;}
+.chm-91::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:45%;background:linear-gradient(0deg,var(--hc2),transparent);animation:ud91b .45s linear infinite;}
+/* 92 */
+.chm-92::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2),var(--hc1));background-size:100% 200%;animation:ud92 .7s linear infinite;}
+/* 93 */
+.chm-93::before{content:'';position:absolute;top:-50%;left:-30%;height:200%;width:35%;background:linear-gradient(90deg,transparent,var(--hc1),transparent);animation:ud93 .85s linear infinite;}
+/* 94 */
+.chm-94::before{content:'';position:absolute;top:-50%;right:-30%;height:200%;width:35%;background:linear-gradient(90deg,transparent,var(--hc2),transparent);animation:ud94 .85s linear infinite;}
+/* 95 */
+.chm-95::before{content:'';position:absolute;inset:0;background:var(--hc1);animation:ud95 .55s ease-in-out infinite;}
+/* 96 */
+.chm-96::before{content:'';position:absolute;inset:0;background:var(--hc2);animation:ud96 .55s ease-in-out infinite;}
+/* 97 */
+.chm-97::before{content:'';position:absolute;left:0;top:0;width:100%;height:60%;background:linear-gradient(180deg,#f00,#f70,#ff0,#0f0,#0ff,transparent);animation:ud60 .85s linear infinite;}
+.chm-97::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:60%;background:linear-gradient(0deg,#00f,#f0f,#f00,transparent);animation:ud61 .85s linear infinite;}
+/* 98 */
+.chm-98::before{content:'';position:absolute;left:0;top:0;width:100%;height:45%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud98t .7s ease-in-out infinite;}
+.chm-98::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:45%;background:linear-gradient(0deg,var(--hc2),transparent);animation:ud98b .7s ease-in-out infinite;}
+/* 99 */
+.chm-99::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--hc1),var(--hc2));animation:ud99 .35s step-end infinite;}
+/* 100 — MAXIMUM */
+.chm-100{animation:ud100p .6s ease-in-out infinite!important;}
+.chm-100::before{content:'';position:absolute;left:0;top:0;width:100%;height:50%;background:linear-gradient(180deg,var(--hc1),transparent);animation:ud100t .5s ease-in-out infinite;}
+.chm-100::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:50%;background:linear-gradient(0deg,var(--hc2),transparent);animation:ud100b .5s ease-in-out infinite;}
+.color-row label{margin-top:4px;}
+@media print{button,.vbtns,#adminBtn{display:none!important;}}
+</style>
+</head>
+<body>
+<div class="box">
+  <div style="text-align:center;"><span id="modeBadge" class="mode-badge public">🔒 PUBLIC MODE</span></div>
+  <h2>💰 LOANPRO</h2>
+  <div id="topBar" style="display:none;background:#e3f2fd;border-radius:8px;padding:8px;text-align:center;font-size:12px;color:#1565c0;margin-bottom:8px;">⏳ Syncing...</div>
+  <label>Bill No <span id="adminBillTag" class="autofill-tag hidden">🔍 Auto-fill ON</span></label>
+  <input id="billInput" placeholder="Bill No (R1234 / Y1234)" autocomplete="off">
+  <div id="billFetchStatus" class="bill-fetch-status"></div>
+  <label>Loan Amount (₹)</label>
+  <input id="amtInput" type="number" placeholder="Loan Amount" min="0">
+  <label id="dateLbl" style="color:var(--dateColor);">📅 Date</label>
+  <input id="dtInput" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" style="border-color:var(--dateColor);">
+  <label>Paid Months</label>
+  <input id="paidInput" type="number" placeholder="Paid Months" min="0">
+  <button id="calcBtn">CALCULATE</button>
+  <div id="result"></div>
+  <button onclick="addLoan()" style="margin-top:8px;">➕ ADD LOAN</button>
+</div>
+
+<div class="box">
+  <h3>📋 Loan Table</h3>
+  <table>
+    <thead><tr id="tableHead"><th>Bill No</th><th>Loan</th><th>Due</th><th>Interest</th><th>Total</th><th>✖</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div id="summary"></div>
+  <div class="vbtns">
+    <button id="payBtn" onclick="openPay()">💳 PAY (GPAY)</button>
+    <button id="waBtn" onclick="sendWhatsApp()">📱 WHATSAPP</button>
+    <button id="printBtn" onclick="printInvoice()">🖨️ PRINT INVOICE</button>
+  </div>
+</div>
+
+<div class="box" id="adminBtn">
+  <button onclick="admin()">⚙️ ADMIN SETTINGS</button>
+  <div id="settings" class="hidden">
+    <h4>⚙️ Admin Settings</h4>
+
+    <div class="anim-panel">
+            <div class="sw-title">🖱️ TABLE CELL HOVER — 100 MODES</div>
+      <label style="color:#ce93d8;">Cell Hover Mode (cursor touch effect)</label>
+      <select id="cellModeInput" onchange="previewCell()">
+        <optgroup label="── L→R Sweeps (1–10) ──">
+          <option value="1">1 — Thin Gradient Bar L→R ⭐</option>
+          <option value="2">2 — Wide Dual Color Bar L→R</option>
+          <option value="3">3 — Neon Line L→R ⭐</option>
+          <option value="4">4 — Double Neon Lines L→R</option>
+          <option value="5">5 — Skew Bar L→R</option>
+          <option value="6">6 — Rainbow Sweep L→R</option>
+          <option value="7">7 — Shimmer Glitter L→R</option>
+          <option value="8">8 — Bounce Sweep L→R</option>
+          <option value="9">9 — Dual Color Fill L→R</option>
+          <option value="10">10 — Color Wipe Fill L→R</option>
+        </optgroup>
+        <optgroup label="── R→L Sweeps (11–20) ──">
+          <option value="11">11 — Thin Gradient Bar R→L</option>
+          <option value="12">12 — Wide Dual Color Bar R→L</option>
+          <option value="13">13 — Neon Line R→L ⭐</option>
+          <option value="14">14 — Double Neon Lines R→L</option>
+          <option value="15">15 — Skew Bar R→L</option>
+          <option value="16">16 — Rainbow Sweep R→L</option>
+          <option value="17">17 — Shimmer Glitter R→L</option>
+          <option value="18">18 — Color Wipe Fill R→L</option>
+          <option value="19">19 — Dual Split L+R → Center ⭐</option>
+          <option value="20">20 — Mirror Center → L+R Edges ⭐</option>
+        </optgroup>
+        <optgroup label="── Top→Bottom Sweeps (21–30) ──">
+          <option value="21">21 — Thin Bar T→B ⭐</option>
+          <option value="22">22 — Wide Bar T→B</option>
+          <option value="23">23 — Neon Line T→B ⭐</option>
+          <option value="24">24 — Double Neon Lines T→B</option>
+          <option value="25">25 — Skew Bar T→B</option>
+          <option value="26">26 — Rainbow T→B</option>
+          <option value="27">27 — Shimmer T→B</option>
+          <option value="28">28 — Color Wipe Fill T→B</option>
+          <option value="29">29 — Dual Split T+B → Outward ⭐</option>
+          <option value="30">30 — Mirror Center → T+B Edges</option>
+        </optgroup>
+        <optgroup label="── Bottom→Top Sweeps (31–40) ──">
+          <option value="31">31 — Thin Bar B→T</option>
+          <option value="32">32 — Wide Bar B→T</option>
+          <option value="33">33 — Neon Line B→T ⭐</option>
+          <option value="34">34 — Double Neon Lines B→T</option>
+          <option value="35">35 — Skew Bar B→T</option>
+          <option value="36">36 — Rainbow B→T</option>
+          <option value="37">37 — Shimmer B→T</option>
+          <option value="38">38 — Color Wipe Fill B→T</option>
+          <option value="39">39 — T Neon + B Neon Both Sweep ⭐</option>
+          <option value="40">40 — T Color + B Color Meet Center ⭐</option>
+        </optgroup>
+        <optgroup label="── Double Blink Up+Down (41–50) ──">
+          <option value="41">41 — T+B Bars Meet Center (Slow) ⭐</option>
+          <option value="42">42 — T+B Bars (Fast)</option>
+          <option value="43">43 — Top hc1 / Bottom hc2 Alt Flash ⭐</option>
+          <option value="44">44 — Twin Neon T+B Opposite ⭐</option>
+          <option value="45">45 — Gradient Drip T+B Inward</option>
+          <option value="46">46 — Both Halves Alternate Blink</option>
+          <option value="47">47 — T Slow + B Fast</option>
+          <option value="48">48 — Vertical Plasma Wave</option>
+          <option value="49">49 — Vertical Color Chase</option>
+          <option value="50">50 — Full Double Drip T+B ⭐</option>
+        </optgroup>
+        <optgroup label="── Diagonal Sweeps (51–60) ──">
+          <option value="51">51 — Diagonal ↘</option>
+          <option value="52">52 — Diagonal ↙</option>
+          <option value="53">53 — Diagonal ↗</option>
+          <option value="54">54 — Diagonal ↖</option>
+          <option value="55">55 — X-Cross ↘+↙ ⭐</option>
+          <option value="56">56 — Wide Diagonal Dual Color ↘</option>
+          <option value="57">57 — Double Diagonal Same Dir</option>
+          <option value="58">58 — Rainbow Diagonal ↘</option>
+          <option value="59">59 — V-Cross ↘+↗ ⭐</option>
+          <option value="60">60 — Neon Line Diagonal ↘</option>
+        </optgroup>
+        <optgroup label="── Flash & Pulse (61–70) ──">
+          <option value="61">61 — Solid Flash hc1</option>
+          <option value="62">62 — Solid Flash hc2</option>
+          <option value="63">63 — Alternating hc1↔hc2 Flash ⭐</option>
+          <option value="64">64 — Strobe Flash</option>
+          <option value="65">65 — Triple Strobe hc1+hc2</option>
+          <option value="66">66 — Heartbeat Scale</option>
+          <option value="67">67 — Inset Border Glow Pulse ⭐</option>
+          <option value="68">68 — Neon Border Chase ⭐</option>
+          <option value="69">69 — Invert Color Flash</option>
+          <option value="70">70 — Shake + Color Overlay</option>
+        </optgroup>
+        <optgroup label="── Radial & Burst (71–80) ──">
+          <option value="71">71 — Radial Burst from Center ⭐</option>
+          <option value="72">72 — Big Radial Explode</option>
+          <option value="73">73 — Double Radial hc1+hc2</option>
+          <option value="74">74 — Star Burst ★ ⭐</option>
+          <option value="75">75 — Spinning Ring</option>
+          <option value="76">76 — Spinning Bar</option>
+          <option value="77">77 — Plasma Glow (Hue Rotate)</option>
+          <option value="78">78 — Glitch Strips</option>
+          <option value="79">79 — Scrolling H Stripes</option>
+          <option value="80">80 — Scrolling V Stripes</option>
+        </optgroup>
+        <optgroup label="── Gradient Waves (81–90) ──">
+          <option value="81">81 — Horizontal Gradient Wave ⭐</option>
+          <option value="82">82 — Vertical Gradient Wave ⭐</option>
+          <option value="83">83 — Diagonal Gradient Wave</option>
+          <option value="84">84 — Clip Reveal L→R</option>
+          <option value="85">85 — Clip Reveal T→B</option>
+          <option value="86">86 — H Wave Fast</option>
+          <option value="87">87 — Vertical Rainbow Wave</option>
+          <option value="88">88 — Diagonal Rainbow Wave</option>
+          <option value="89">89 — Double H Wave</option>
+          <option value="90">90 — Double V Wave</option>
+        </optgroup>
+        <optgroup label="── Maximum Combos (91–100) ──">
+          <option value="91">91 — LR Sweep + TB Neon Line ⭐</option>
+          <option value="92">92 — 4-Side Glow + T+B Neon ⭐</option>
+          <option value="93">93 — L+R Neon + T+B Neon ⭐</option>
+          <option value="94">94 — X Diagonal Cross ⭐</option>
+          <option value="95">95 — LR Sweep + V Wave Combo</option>
+          <option value="96">96 — T+B Neon + Stripes</option>
+          <option value="97">97 — Radial Burst + T Neon</option>
+          <option value="98">98 — H Rainbow + V Rainbow ⭐</option>
+          <option value="99">99 — Neon Line + Diagonal</option>
+          <option value="100">100 — MAXIMUM ALL EFFECTS ⭐⭐⭐</option>
+        </optgroup>
+      </select>
+      <div class="color-row" style="margin-top:10px;">
+        <label style="color:#ce93d8;">Color 1</label>
+        <input type="color" id="hoverColor1Input" value="#00ff00" oninput="previewCell()">
+        <label style="color:#ce93d8;">Color 2</label>
+        <input type="color" id="hoverColor2Input" value="#ffff00" oninput="previewCell()">
+      </div>
+      <div style="color:#aaa;font-size:12px;margin-top:10px;">Preview (hover cell):</div>
+      <div style="text-align:center;"><div class="preview-cell" id="cellPreview">R1234 — ₹50,000</div></div>
+    </div>
+    <hr>
+
+    <div class="anim-panel">
+      <div class="sw-title">✨ GRAND TOTAL BLINK — 30 MODES</div>
+      <label style="color:#ce93d8;">Blink Mode</label>
+      <select id="blinkModeInput" onchange="previewBlink()">
+        <option value="1">1 — Classic On/Off</option><option value="2">2 — Slow Fade</option>
+        <option value="3">3 — Color Flash</option><option value="4">4 — Neon Glow ⭐</option>
+        <option value="5">5 — Scale Bounce</option><option value="6">6 — Pill Flash</option>
+        <option value="7">7 — Letter Spacing</option><option value="8">8 — Triple Blink</option>
+        <option value="9">9 — Rainbow</option><option value="10">10 — Shake X</option>
+        <option value="11">11 — Glitter</option><option value="12">12 — Neon Cycle ⭐</option>
+        <option value="13">13 — Wobble Zoom</option><option value="14">14 — Pill Morph</option>
+        <option value="15">15 — Shadow Dance</option><option value="16">16 — Skew Flicker</option>
+        <option value="17">17 — Hue Rotate</option><option value="18">18 — Elastic Pop</option>
+        <option value="19">19 — Ultra Glow ⭐</option><option value="20">20 — 3D Flip</option>
+        <option value="21">21 — Double Color Box ⭐</option><option value="22">22 — Drop Shadow</option>
+        <option value="23">23 — Bounce Y</option><option value="24">24 — Blur Fade</option>
+        <option value="25">25 — Jelly Squish</option><option value="26">26 — Weight Wave</option>
+        <option value="27">27 — Contrast Surge</option><option value="28">28 — Tilt Rock</option>
+        <option value="29">29 — Squeeze X</option><option value="30">30 — Full Chaos ⭐</option>
+      </select>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+        <label style="margin:0;color:#ce93d8;font-size:12px;flex:0 0 auto;">Speed:</label>
+        <input type="range" id="blinkSpeedInput" min="200" max="3000" step="100" value="1000" oninput="previewBlink()" style="flex:1;margin-top:0;padding:0;height:auto;border:none;">
+        <span id="speedLabel" style="font-size:11px;color:#aaa;min-width:38px;">1.0s</span>
+      </div>
+      <div class="color-row">
+        <label style="color:#ce93d8;">Blink C1</label>
+        <input type="color" id="blinkColor1Input" value="#ffff00" oninput="previewBlink()">
+        <label style="color:#ce93d8;">Blink C2</label>
+        <input type="color" id="blinkColor2Input" value="#ff0000" oninput="previewBlink()">
+      </div>
+      <div class="preview-box"><div class="preview-text" id="blinkPreview">GRAND TOTAL: ₹52,500</div></div>
+    </div>
+    <hr>
+
+    <div class="sw-panel">
+      <div class="sw-title">📅 DATE FIELD COLOR</div>
+      <label style="color:#aaa;">Date Label + Border Color</label>
+      <input type="color" id="dateColorInput" value="#ffab40" oninput="liveDate()">
+    </div>
+    <hr>
+
+    <div class="sw-panel">
+      <div class="sw-title">🎨 INPUT FIELD COLOURS (Admin Only)</div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:8px;">Bill No, Amount aur Date inputs ka colour change karo</div>
+      <div class="color-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px;">
+        <div>
+          <label style="color:#80d8ff;font-size:11px;font-weight:700;">🔢 Bill No</label>
+          <input type="color" id="billInputColorInput" value="#0047b3" oninput="liveInputColors()">
+          <div id="prevBillInput" style="margin-top:5px;padding:5px 8px;border-radius:6px;border:2px solid #0047b3;font-size:11px;color:#fff;background:#111;text-align:center;">R1234</div>
+        </div>
+        <div>
+          <label style="color:#a5d6a7;font-size:11px;font-weight:700;">💰 Amount</label>
+          <input type="color" id="amtInputColorInput" value="#28a745" oninput="liveInputColors()">
+          <div id="prevAmtInput" style="margin-top:5px;padding:5px 8px;border-radius:6px;border:2px solid #28a745;font-size:11px;color:#fff;background:#111;text-align:center;">₹50000</div>
+        </div>
+        <div>
+          <label style="color:#ffcc80;font-size:11px;font-weight:700;">📅 Date</label>
+          <input type="color" id="dtInputColorInput" value="#ffab40" oninput="liveInputColors()">
+          <div id="prevDtInput" style="margin-top:5px;padding:5px 8px;border-radius:6px;border:2px solid #ffab40;font-size:11px;color:#fff;background:#111;text-align:center;">DD/MM/YY</div>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <div class="sw-panel">
+      <div class="sw-title">🎛️ PUBLIC CONTROLS</div>
+      <div class="info info-b" style="font-size:12px;">Admin PUSH → All mobiles update in ~30s</div>
+      <div class="sw-row"><div class="sw-info"><div class="sw-label">🔍 Bill Auto-Fetch</div></div><label class="toggle"><input type="checkbox" id="publicBillFetchSwitch" onchange="updSw('publicBillFetch')"><span class="slider"></span></label><span class="toggle-status" id="st_publicBillFetch">OFF</span></div>
+      <div class="sw-row"><div class="sw-info"><div class="sw-label">📈 Interest Column</div></div><label class="toggle"><input type="checkbox" id="publicInterestSwitch" onchange="updSw('publicInterest')"><span class="slider"></span></label><span class="toggle-status" id="st_publicInterest">OFF</span></div>
+      <div class="sw-row"><div class="sw-info"><div class="sw-label">📱 WhatsApp Button</div></div><label class="toggle"><input type="checkbox" id="publicWhatsappSwitch" onchange="updSw('publicWhatsapp')"><span class="slider"></span></label><span class="toggle-status" id="st_publicWhatsapp">OFF</span></div>
+      <div class="sw-row"><div class="sw-info"><div class="sw-label">💳 GPay Button</div></div><label class="toggle"><input type="checkbox" id="publicGpaySwitch" onchange="updSw('publicGpay')"><span class="slider"></span></label><span class="toggle-status" id="st_publicGpay">OFF</span></div>
+      <div class="sw-row"><div class="sw-info"><div class="sw-label">🖨️ Print Button</div></div><label class="toggle"><input type="checkbox" id="publicPrintSwitch" onchange="updSw('publicPrint')"><span class="slider"></span></label><span class="toggle-status" id="st_publicPrint">OFF</span></div>
+      <div class="sw-row"><div class="sw-info"><div class="sw-label">🗑️ Delete Button</div></div><label class="toggle"><input type="checkbox" id="publicDeleteSwitch" onchange="updSw('publicDelete')"><span class="slider"></span></label><span class="toggle-status" id="st_publicDelete">OFF</span></div>
+    </div>
+    <hr>
+
+    <div class="script-cell">
+      <div style="font-size:14px;font-weight:700;color:#6a1b9a;margin-bottom:8px;">☁️ GOOGLE SHEET SYNC — Live All Mobiles</div>
+      <div class="info info-p" style="font-size:12px;">Admin SAVE → PUSH ALL → Public mobiles auto-sync every 30s</div>
+      <label>Apps Script URL</label>
+      <input id="billUrlInput" placeholder="https://script.google.com/macros/s/YOUR_ID/exec">
+      <div class="chk"><input type="checkbox" id="fetchOnInput"><span>Auto-Sync on page load</span></div>
+      <div id="syncStatus" class="sync-bar"></div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button class="orange-btn" onclick="testSheetSync()" style="flex:1;font-size:13px;">🔄 TEST</button>
+        <button class="green-btn" onclick="pushToSheet()" style="flex:1;font-size:13px;">☁️ PUSH ALL</button>
+      </div>
+      <button onclick="pullFromSheet()" style="margin-top:6px;font-size:13px;background:linear-gradient(135deg,#673ab7,#311b92);">⬇️ PULL (Force)</button>
+      <label style="margin-top:10px;">SMS / Notice URL</label>
+      <input id="noticeUrlInput" placeholder="Bulk SMS URL">
+      <div class="chk"><input type="checkbox" id="noticeOnInput"><span>Enable Bulk SMS</span></div>
+      <button onclick="sendBulkNotice()" style="font-size:13px;margin-top:6px;">📨 SEND BULK NOTICE</button>
+    </div>
+    <hr>
+    <div class="share-box">
+      <h4 style="color:#1b5e20;text-align:left;margin-bottom:6px;">📤 Public Share Link</h4>
+      <div class="share-url" id="shareUrl">—</div>
+      <button class="green-btn" onclick="copyShareUrl()" style="font-size:13px;">📋 COPY LINK</button>
+    </div>
+    <hr>
+    <div class="chk"><input type="checkbox" id="interestOnInput"><span>Interest ON/OFF</span></div>
+    <label>Interest Mode</label>
+    <select id="intModeInput"><option value="two">Two Rate (≤6 / >6 months)</option><option value="one">Single Rate</option><option value="off">No Interest</option></select>
+    <label>Interest ≤6 months %</label><input id="r1Input" type="number" step="0.01" min="0">
+    <label>Interest >6 months %</label><input id="r2Input" type="number" step="0.01" min="0">
+    <hr>
+    <label>UPI ID (GPay)</label><input id="upiIdInput" placeholder="yourname@upi">
+    <hr>
+    <h4>🎨 Theme</h4>
+    <label>Main Color</label><input type="color" id="mainColorInput">
+    <label>Background</label><input type="color" id="bgColorInput">
+    <label>Highlight (focus)</label><input type="color" id="highlightColorInput">
+    <label>Invoice Font Size</label><input type="number" id="invoiceFontInput" min="10" max="40">
+    <label>Invoice Font Color</label><input type="color" id="invoiceColorInput">
+    <label>Invoice Background</label><input type="color" id="invoiceBgInput">
+    <div class="chk"><input type="checkbox" id="darkOnInput"><span>Dark Mode</span></div>
+    <label>Font Family</label>
+    <select id="fontFamilyInput">
+      <option value="'Rajdhani',sans-serif">Rajdhani</option><option value="'Roboto',sans-serif">Roboto</option>
+      <option value="Arial,sans-serif">Arial</option><option value="Poppins,sans-serif">Poppins</option>
+      <option value="Montserrat,sans-serif">Montserrat</option><option value="Nunito,sans-serif">Nunito</option>
+      <option value="Mukta,sans-serif">Mukta</option><option value="'Hind',sans-serif">Hind</option>
+    </select>
+    <hr>
+    <label>Extra Charge (₹)</label><input id="extraValInput" type="number" min="0">
+    <div class="chk"><input type="checkbox" id="extraOnInput"><span>Enable Extra Charge</span></div>
+    <hr>
+    <h4>🗂️ Table Colors</h4>
+    <label>Table Background</label><input type="color" id="tableBgInput">
+    <label>Table Header</label><input type="color" id="tableHeaderInput">
+    <label>Table Font</label><input type="color" id="tableFontInput">
+    <label>Loan Total Color</label><input type="color" id="loanTotalColorInput">
+    <label>Interest Color</label><input type="color" id="loanInterestColorInput">
+    <label>Grand Total Color</label><input type="color" id="grandColorInput">
+    <label>Grand Total Background</label><input type="color" id="grandBgColorInput">
+    <hr>
+    <h4>🔘 Button Gradient — 50 Shades</h4>
+    <div class="grad-panel">
+      <div class="grad-panel-title">🎨 Click any shade to apply to all buttons instantly</div>
+      <div id="gradSwatches" class="grad-swatches"></div>
+      <div class="grad-preview-wrap">
+        <div class="grad-preview-label">CURRENT PREVIEW</div>
+        <button id="gradPreviewBtn" style="margin-top:6px;pointer-events:none;">BUTTON PREVIEW</button>
+      </div>
+      <div class="grad-custom-row">
+        <div>
+          <label style="color:#ce93d8;font-size:11px;margin-top:4px;">Custom Start</label>
+          <input type="color" id="gradStartInput" oninput="applyGradCustom()">
+        </div>
+        <div>
+          <label style="color:#ce93d8;font-size:11px;margin-top:4px;">Custom End</label>
+          <input type="color" id="gradEndInput" oninput="applyGradCustom()">
+        </div>
+      </div>
+    </div>
+    <hr>
+    <h4>🔊 Audio</h4>
+    <div class="chk"><input type="checkbox" id="audioOnInput"><span>Enable Audio</span></div>
+    <div class="snd-card" style="border-color:#1976d2;"><div class="snd-title" style="color:#1976d2;">CALCULATE SOUND</div><span id="selCalcLbl" class="sel-lbl">Bell 1</span><div id="calcPicker"></div><button class="green-btn" style="font-size:12px;padding:6px;margin-top:5px;" onclick="testOffline('calc')">▶ Test</button><div class="mp3r"><input id="calcAudioUrlInput" type="url" placeholder="MP3 URL"><button class="green-btn" onclick="testMP3('calc')">Play</button><button class="red-btn" onclick="clearMP3('calc')">✕</button></div><div id="calcMP3Status" class="mp3s"></div></div>
+    <div class="snd-card" style="border-color:#28a745;margin-top:8px;"><div class="snd-title" style="color:#28a745;">ADD LOAN SOUND</div><span id="selAddLbl" class="sel-lbl">Coins 1</span><div id="addPicker"></div><button class="green-btn" style="font-size:12px;padding:6px;margin-top:5px;" onclick="testOffline('add')">▶ Test</button><div class="mp3r"><input id="addAudioUrlInput" type="url" placeholder="MP3 URL"><button class="green-btn" onclick="testMP3('add')">Play</button><button class="red-btn" onclick="clearMP3('add')">✕</button></div><div id="addMP3Status" class="mp3s"></div></div>
+    <div class="snd-card" style="border-color:#f44336;margin-top:8px;"><div class="snd-title" style="color:#f44336;">DELETE SOUND</div><span id="selDelLbl" class="sel-lbl">Thud 1</span><div id="delPicker"></div><button class="green-btn" style="font-size:12px;padding:6px;margin-top:5px;" onclick="testOffline('del')">▶ Test</button><div class="mp3r"><input id="delAudioUrlInput" type="url" placeholder="MP3 URL"><button class="green-btn" onclick="testMP3('del')">Play</button><button class="red-btn" onclick="clearMP3('del')">✕</button></div><div id="delMP3Status" class="mp3s"></div></div>
+    <div class="bsbox">
+      <h4 style="color:#e65100;margin-bottom:6px;">BILL WISE SOUND</h4>
+      <div class="bsrow"><input id="newBillNo" placeholder="Bill No"><input id="newBillUrl" type="url" placeholder="MP3 URL"><button class="green-btn" onclick="addBillSound()">Add</button><button class="orange-btn" onclick="testNewBillSound()">▶</button></div>
+      <div id="billSoundStatus" class="mp3s"></div>
+      <div style="font-size:12px;font-weight:700;margin-top:8px;">Count: <span id="bsCount" style="background:#0047b3;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;">0</span></div>
+      <div id="bsList" class="bslist"></div>
+      <button class="red-btn" onclick="clearAllBillSounds()" style="margin-top:8px;font-size:12px;padding:7px;">CLEAR ALL</button>
+    </div>
+    <hr>
+    <div class="github-box">
+      <h4>🐙 GITHUB LIVE HOSTING</h4>
+      <div class="g-step"><b>1.</b> <code>github.com</code> → New Repo → name: <code>loanpro</code></div>
+      <div class="g-step"><b>2.</b> Upload this <code>index.html</code></div>
+      <div class="g-step"><b>3.</b> Settings → Pages → Branch: <code>main</code> → Save</div>
+      <div class="g-step"><b>4.</b> Live: <code>yourusername.github.io/loanpro</code></div>
+      <div class="g-step"><b>5.</b> Set Script URL → All mobiles sync ⚡</div>
+    </div>
+    <hr>
+    <label>Change Admin Password</label>
+    <input id="newPassInput" type="password" placeholder="New password">
+    <button onclick="saveSettings()" style="margin-top:10px;background:linear-gradient(135deg,#28a745,#1a7a30);">💾 SAVE ALL SETTINGS</button>
+    <button class="yellow-btn" onclick="undoLastChange()" style="margin-top:6px;">↩ UNDO</button>
+    <button class="red-btn" onclick="adminLogout()" style="margin-top:6px;">🚪 LOGOUT ADMIN</button>
+  </div>
+</div>
+
+<audio id="calcAudio" preload="none"></audio>
+<audio id="addAudio" preload="none"></audio>
+<audio id="delAudio" preload="none"></audio>
+<audio id="billAudio" preload="none"></audio>
+
+<script>
+'use strict';
+const LS={g(k){try{return localStorage.getItem(k);}catch(e){return null;}},s(k,v){try{localStorage.setItem(k,v);}catch(e){}},d(k){try{localStorage.removeItem(k);}catch(e){}}};
+const D={pass:'1234',r1:'1.25',r2:'1.75',intMode:'two',interestOn:'true',mainColor:'#0047b3',bgColor:'#e6f7ff',highlightColor:'#fffa90',invoiceFont:'18',invoiceColor:'#00ff00',invoiceBg:'#000000',dark:'false',tableBg:'#000000',tableHeader:'#222222',tableFont:'#ffffff',grandColor:'#ffff00',loanInterestColor:'#ffff00',loanTotalColor:'#ffffff',grandBgColor:'#111111',fontFamily:"'Rajdhani',sans-serif",extraOn:'false',extraVal:'10',billUrl:'',fetchOn:'false',noticeUrl:'',noticeOn:'false',gradStart:'#0a58ff',gradEnd:'#0047b3',audioOn:'false',calcAudioUrl:'',addAudioUrl:'',delAudioUrl:'',upiId:'',publicBillFetch:'false',publicInterest:'true',publicWhatsapp:'false',publicGpay:'false',publicPrint:'false',publicDelete:'false',blinkMode:'4',blinkColor1:'#ffff00',blinkColor2:'#ff0000',blinkSpeed:'1000',cellMode:'1',hoverColor1:'#00ff00',hoverColor2:'#ffff00',dateColor:'#ffab40',billInputColor:'#0047b3',amtInputColor:'#28a745',dtInputColor:'#ffab40'};
+const gs=k=>{const v=LS.g(k);return(v!==null&&v!==undefined)?v:(D[k]??'');};
+const isAdmin=()=>LS.g('isAdminMode')==='true';
+
+function applyVars(){
+  const r=document.documentElement,sv=(n,v)=>r.style.setProperty(n,v);
+  sv('--mc',gs('mainColor'));sv('--bg',gs('bgColor'));sv('--hi',gs('highlightColor'));
+  sv('--tbg',gs('tableBg'));sv('--thd',gs('tableHeader'));sv('--tfc',gs('tableFont'));
+  sv('--gtc',gs('grandColor'));sv('--lic',gs('loanInterestColor'));sv('--ltc',gs('loanTotalColor'));sv('--gtbg',gs('grandBgColor'));
+  sv('--ff',gs('fontFamily'));sv('--grad',`linear-gradient(135deg,${gs('gradStart')},${gs('gradEnd')})`);
+  sv('--b1',gs('blinkColor1'));sv('--b2',gs('blinkColor2'));sv('--spd',gs('blinkSpeed')+'ms');
+  sv('--hc1',gs('hoverColor1'));sv('--hc2',gs('hoverColor2'));sv('--dateColor',gs('dateColor'));sv('--billIc',gs('billInputColor'));sv('--amtIc',gs('amtInputColor'));sv('--dtIc',gs('dtInputColor'));
+  document.body.classList.toggle('dark',gs('dark')==='true');
+  document.documentElement.classList.remove('dark-pre');
+  liveDate();
+  const su=document.getElementById('shareUrl');if(su)su.textContent=location.href.split('?')[0];
+}
+
+function liveDate(){
+  const c=document.getElementById('dateColorInput')?.value||gs('dateColor');
+  const lbl=document.getElementById('dateLbl'),inp=document.getElementById('dtInput');
+  document.documentElement.style.setProperty('--dateColor',c);
+  if(lbl)lbl.style.color=c;if(inp)inp.style.borderColor=c;
+}
+
+function liveInputColors(){
+  const bc=document.getElementById('billInputColorInput')?.value||gs('billInputColor');
+  const ac=document.getElementById('amtInputColorInput')?.value||gs('amtInputColor');
+  const dc=document.getElementById('dtInputColorInput')?.value||gs('dtInputColor');
+  const r=document.documentElement;
+  r.style.setProperty('--billIc',bc);
+  r.style.setProperty('--amtIc',ac);
+  r.style.setProperty('--dtIc',dc);
+  // live preview mini boxes
+  const pb=document.getElementById('prevBillInput');
+  const pa=document.getElementById('prevAmtInput');
+  const pd=document.getElementById('prevDtInput');
+  if(pb)pb.style.borderColor=bc;
+  if(pa)pa.style.borderColor=ac;
+  if(pd)pd.style.borderColor=dc;
+  // actual inputs
+  const bi=document.getElementById('billInput');
+  const ai=document.getElementById('amtInput');
+  const di=document.getElementById('dtInput');
+  if(bi)bi.style.borderColor=bc;
+  if(ai)ai.style.borderColor=ac;
+  if(di){di.style.borderColor=dc;document.documentElement.style.setProperty('--dateColor',dc);}
+}
+
+let curCellMode=1;
+function applyCellMode(m){
+  curCellMode=parseInt(m)||1;
+  document.documentElement.style.setProperty('--hc1',gs('hoverColor1'));
+  document.documentElement.style.setProperty('--hc2',gs('hoverColor2'));
+}
+
+function attachHover(tr){
+  const cells=tr.querySelectorAll('td');
+  cells.forEach(td=>{
+    td.addEventListener('mouseenter',()=>{
+      cells.forEach(c=>c.className=c.className.replace(/chm-\d+/g,'').trim());
+      td.classList.add('chm-'+curCellMode);
+    });
+    td.addEventListener('mouseleave',()=>{
+      td.className=td.className.replace(/chm-\d+/g,'').trim();
+    });
+  });
+}
+
+function previewCell(){
+  const mode=document.getElementById('cellModeInput')?.value||'1';
+  const c1=document.getElementById('hoverColor1Input')?.value;
+  const c2=document.getElementById('hoverColor2Input')?.value;
+  const r=document.documentElement;
+  if(c1)r.style.setProperty('--hc1',c1);if(c2)r.style.setProperty('--hc2',c2);
+  const prev=document.getElementById('cellPreview');if(!prev)return;
+  prev.className='preview-cell';void prev.offsetWidth;prev.classList.add('chm-'+mode);
+}
+
+function previewBlink(){
+  const sel=document.getElementById('blinkModeInput'),c1=document.getElementById('blinkColor1Input');
+  const c2=document.getElementById('blinkColor2Input'),sp=document.getElementById('blinkSpeedInput');
+  const prev=document.getElementById('blinkPreview'),lbl=document.getElementById('speedLabel');
+  if(!sel||!prev)return;
+  const r=document.documentElement;
+  if(c1)r.style.setProperty('--b1',c1.value);if(c2)r.style.setProperty('--b2',c2.value);
+  if(sp){r.style.setProperty('--spd',sp.value+'ms');if(lbl)lbl.textContent=(sp.value/1000).toFixed(1)+'s';}
+  prev.className='preview-text';void prev.offsetWidth;prev.className='preview-text bm-'+sel.value;
+  if(c1)prev.style.color=c1.value;
+}
+
+function applyModeUI(){
+  const adm=isAdmin(),badge=document.getElementById('modeBadge'),tag=document.getElementById('adminBillTag');
+  badge.className='mode-badge '+(adm?'admin':'public');badge.textContent=adm?'🔑 ADMIN MODE':'🔒 PUBLIC MODE';
+  adm?tag.classList.remove('hidden'):tag.classList.add('hidden');
+  document.getElementById('payBtn').style.display=(adm||gs('publicGpay')==='true')?'':'none';
+  document.getElementById('waBtn').style.display=(adm||gs('publicWhatsapp')==='true')?'':'none';
+  document.getElementById('printBtn').style.display=(adm||gs('publicPrint')==='true')?'':'none';
+  applyCellMode(gs('cellMode'));render();
+}
+
+const SWK=['publicBillFetch','publicInterest','publicWhatsapp','publicGpay','publicPrint','publicDelete'];
+function updSw(k){const cb=document.getElementById(k+'Switch'),lbl=document.getElementById('st_'+k);if(!cb||!lbl)return;lbl.textContent=cb.checked?'ON':'OFF';lbl.className='toggle-status'+(cb.checked?' on':'');}
+function loadSwitches(){SWK.forEach(k=>{const cb=document.getElementById(k+'Switch');if(cb){cb.checked=gs(k)==='true';updSw(k);}});}
+function saveSwitches(){SWK.forEach(k=>{const cb=document.getElementById(k+'Switch');if(cb)LS.s(k,String(cb.checked));});}
+
+function showSync(msg,t){const el=document.getElementById('syncStatus');if(!el)return;el.className='sync-bar '+t;el.textContent=msg;if(t==='s-ok')setTimeout(()=>el.style.display='none',4000);}
+
+async function pushToSheet(){
+  const url=gs('billUrl');if(!url){alert('Script URL save karo!');return;}
+  showSync('Pushing...','s-load');
+  const data={};Object.keys(D).forEach(k=>{if(k!=='pass')data[k]=gs(k);});
+  data.sound_calc=JSON.stringify(selectedSounds.calc);data.sound_add=JSON.stringify(selectedSounds.add);data.sound_del=JSON.stringify(selectedSounds.del);data.billSounds=JSON.stringify(billSounds);
+  try{await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saveSettings',data})});showSync('✅ PUSHED! All mobiles update in 30s','s-ok');alert('✅ PUSHED!\nPublic mobiles auto-update in ~30 seconds.');}
+  catch(e){showSync('❌ Push Failed','s-err');}
+}
+
+async function pullFromSheet(){
+  const url=gs('billUrl');if(!url){alert('URL set nahi!');return;}showSync('Pulling...','s-load');
+  try{const r=await fetch(url+'?action=getSettings&t='+Date.now());const d=await r.json();applySheetData(d);showSync('✅ Synced!','s-ok');}
+  catch(e){showSync('❌ Failed: '+e.message,'s-err');}
+}
+
+function applySheetData(d){
+  if(!d||!d.settings)return;const s=d.settings;
+  Object.keys(s).forEach(k=>{if(k!=='pass')LS.s(k,s[k]);});
+  if(s.billSounds){try{billSounds=JSON.parse(s.billSounds);}catch(e){billSounds={};}}
+  ['calc','add','del'].forEach(a=>{const sv=s['sound_'+a];if(sv){try{selectedSounds[a]=JSON.parse(sv);}catch(e){}}});
+  applyVars();applyModeUI();render();
+}
+
+async function fetchSettingsFromSheet(){
+  if(gs('fetchOn')!=='true')return;const url=gs('billUrl');if(!url)return;
+  const bar=document.getElementById('topBar');if(bar)bar.style.display='block';
+  try{const r=await fetch(url+'?action=getSettings&t='+Date.now());const d=await r.json();applySheetData(d);}catch(e){}
+  finally{if(bar)bar.style.display='none';}
+}
+
+async function testSheetSync(){
+  const url=document.getElementById('billUrlInput')?.value.trim();if(!url){alert('URL daalo!');return;}
+  showSync('Testing...','s-load');try{await fetch(url+'?action=ping',{mode:'no-cors'});showSync('✅ Reachable!','s-ok');}catch(e){showSync('❌ Failed!','s-err');}
+}
+
+async function fetchBillData(billNo){
+  const url=gs('billUrl');if(!url||!billNo)return;if(!isAdmin()&&gs('publicBillFetch')!=='true')return;
+  const st=document.getElementById('billFetchStatus');st.className='bill-fetch-status bf-load';st.textContent='Fetching...';
+  try{const r=await fetch(`${url}?action=getBill&bill=${encodeURIComponent(billNo)}&t=${Date.now()}`);const d=await r.json();if(d&&d.amount){amtInput.value=d.amount;if(d.date)dtInput.value=d.date;if(d.paid!==undefined)paidInput.value=d.paid;st.className='bill-fetch-status bf-ok';st.textContent='✅ Loaded!';calc();}else{st.style.display='none';}}catch(e){st.style.display='none';}
+  setTimeout(()=>st.style.display='none',3000);
+}
+
+let billSounds={};
+function loadBillSounds(){const s=LS.g('billSounds');if(s){try{billSounds=JSON.parse(s);}catch(e){billSounds={};}}}
+function saveBillSounds(){LS.s('billSounds',JSON.stringify(billSounds));}
+function addBillSound(){const no=document.getElementById('newBillNo').value.trim().toUpperCase(),url=document.getElementById('newBillUrl').value.trim();if(!no||!url)return;billSounds[no]=url;saveBillSounds();renderBSList();document.getElementById('newBillNo').value='';document.getElementById('newBillUrl').value='';showBS(no+' saved!',true);}
+function testNewBillSound(){const url=document.getElementById('newBillUrl')?.value.trim();if(url)playMP3D(url,()=>{});}
+function removeBillSound(no){delete billSounds[no];saveBillSounds();renderBSList();}
+function clearAllBillSounds(){if(!confirm('Delete all?'))return;billSounds={};saveBillSounds();renderBSList();}
+function renderBSList(){const list=document.getElementById('bsList'),cnt=document.getElementById('bsCount');if(!list)return;const keys=Object.keys(billSounds);cnt.textContent=keys.length;if(!keys.length){list.innerHTML='<div style="text-align:center;color:#aaa;padding:8px;font-size:12px;">No sounds</div>';return;}list.innerHTML=keys.map(no=>`<div class="bsitem"><span class="bsno">${no}</span><span style="font-size:11px;color:#888;">${(billSounds[no]||'').slice(0,20)}...</span><button class="green-btn" onclick="testBSByNo('${no}')" style="width:auto;margin-top:0;padding:4px 7px;font-size:11px;">▶</button><button class="red-btn" onclick="removeBillSound('${no}')" style="width:auto;margin-top:0;padding:4px 7px;font-size:11px;">✕</button></div>`).join('');}
+function testBSByNo(no){const url=billSounds[no];if(url)playMP3D(url,()=>{});}
+function showBS(msg,ok){const el=document.getElementById('billSoundStatus');if(!el)return;el.className='mp3s '+(ok?'mp3-ok':'mp3-err');el.textContent=msg;setTimeout(()=>el.style.display='none',3000);}
+function checkBillSound(v){if(!v||gs('audioOn')!=='true')return;const url=billSounds[v.trim().toUpperCase()];if(url)playMP3D(url,()=>{});}
+function playMP3D(url,onErr){const ae=document.getElementById('billAudio');ae.src=url;ae.currentTime=0;ae.play().catch(onErr||(()=>{}));}
+
+const SNDCTX=window.AudioContext||window.webkitAudioContext,CATS=['bell','coins','thud','notif','music'],CLBL={bell:'Bell',coins:'Coins',thud:'Thud',notif:'Notif',music:'Music'},ADEF={calc:'bell',add:'coins',del:'thud'},TOTAL=200;
+let selectedSounds={calc:{cat:'bell',v:0},add:{cat:'coins',v:0},del:{cat:'thud',v:0}};
+
+function playOS(cat,v){if(!SNDCTX)return;try{const ctx=new SNDCTX(),t=ctx.currentTime;v=(v||0)%TOTAL;if(cat==='bell'){const nf=[261,277,294,311,330,349,370,392,415,440,466,494,523,554,587,622,659,698,740,784];const freq=nf[v%20]*Math.pow(2,Math.floor(v/20)*.25),dc=.25+(v%8)*.06;const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type=v%2?'triangle':'sine';o.frequency.setValueAtTime(freq,t);o.frequency.exponentialRampToValueAtTime(freq*.5,t+dc);g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+dc+.1);o.start(t);o.stop(t+dc+.15);}else if(cat==='coins'){const roots=[261,294,330,349,392,440,494,523,587,659],pats=[[0,4,7,12],[0,3,7,10],[0,5,9,14],[0,4,9,12],[0,2,7,11]],root=roots[v%roots.length],pat=pats[Math.floor(v/10)%pats.length];pat.slice(0,2+(v%3)).forEach((semi,i)=>{const freq=root*Math.pow(2,semi/12),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=freq;const st=t+i*.09;g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(.4,st+.03);g.gain.exponentialRampToValueAtTime(.001,st+.28);o.start(st);o.stop(st+.33);});}else if(cat==='thud'){const bf=[120,150,100,180,140,90,160,130,110,170][v%10];const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sawtooth';o.frequency.setValueAtTime(bf,t);o.frequency.exponentialRampToValueAtTime(Math.max(bf*.3,20),t+.15);g.gain.setValueAtTime(.4,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.3);}else if(cat==='notif'){const nb=1+(v%4),bf=600+v*8;for(let i=0;i<nb;i++){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=bf+i*60;const st=t+i*.12;g.gain.setValueAtTime(.3,st);g.gain.exponentialRampToValueAtTime(.001,st+.1);o.start(st);o.stop(st+.13);}}else if(cat==='music'){const sc=[261,330,392,523],nc=2+(v%3);sc.slice(0,nc).forEach((freq,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=freq;const st=t+i*.14;g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(.35,st+.04);g.gain.exponentialRampToValueAtTime(.001,st+.35);o.start(st);o.stop(st+.4);});}setTimeout(()=>{try{ctx.close();}catch(e){}},2500);}catch(e){}}
+
+function buildPicker(cid,action){const el=document.getElementById(cid);if(!el)return;let ac=selectedSounds[action]?.cat||ADEF[action];function rP(){el.innerHTML='';const tabs=document.createElement('div');tabs.className='snd-tabs';CATS.forEach(cat=>{const btn=document.createElement('button');btn.className='snd-tab'+(cat===ac?' active':'');btn.textContent=CLBL[cat];btn.onclick=()=>{ac=cat;rP();};tabs.appendChild(btn);});el.appendChild(tabs);const grid=document.createElement('div');grid.className='snd-grid';for(let i=0;i<TOTAL;i++){const btn=document.createElement('button');const sel=selectedSounds[action]?.cat===ac&&selectedSounds[action]?.v===i;btn.className='snd-btn'+(sel?' sel':'');btn.textContent=CLBL[ac]+' '+(i+1);btn.onclick=()=>{selectedSounds[action]={cat:ac,v:i};updLbl(action);playOS(ac,i);rP();};grid.appendChild(btn);}el.appendChild(grid);}rP();}
+function updLbl(a){const s=selectedSounds[a];const ids={calc:'selCalcLbl',add:'selAddLbl',del:'selDelLbl'};const el=document.getElementById(ids[a]);if(el&&s)el.textContent=`${CLBL[s.cat]} ${s.v+1}`;}
+function testOffline(a){const s=selectedSounds[a];if(s)playOS(s.cat,s.v);}
+function testMP3(action){const iid={calc:'calcAudioUrlInput',add:'addAudioUrlInput',del:'delAudioUrlInput'}[action];const sid={calc:'calcMP3Status',add:'addMP3Status',del:'delMP3Status'}[action];const url=document.getElementById(iid)?.value.trim(),st=document.getElementById(sid);if(!url){st.className='mp3s mp3-err';st.textContent='URL daalo!';return;}const ae=document.getElementById(action+'Audio');ae.src=url;ae.currentTime=0;st.className='mp3s mp3-ok';st.textContent='Loading...';ae.play().then(()=>st.textContent='Playing!').catch(()=>{st.className='mp3s mp3-err';st.textContent='Failed.';});}
+function clearMP3(action){const iid={calc:'calcAudioUrlInput',add:'addAudioUrlInput',del:'delAudioUrlInput'}[action];const sid={calc:'calcMP3Status',add:'addMP3Status',del:'delMP3Status'}[action];document.getElementById(iid).value='';const st=document.getElementById(sid);st.className='mp3s mp3-ok';st.textContent='Cleared.';setTimeout(()=>st.style.display='none',2000);}
+function playSound(action){if(gs('audioOn')!=='true')return;const url=gs(action+'AudioUrl');if(url&&url.trim()){const ae=document.getElementById(action+'Audio');ae.src=url;ae.currentTime=0;ae.play().catch(()=>{const s=selectedSounds[action];if(s)playOS(s.cat,s.v);});}else{const sv=gs('sound_'+action);if(sv){try{selectedSounds[action]=JSON.parse(sv);}catch(e){}}const s=selectedSounds[action];playOS(s?s.cat:ADEF[action],s?s.v:0);}}
+
+let loans=[],cur=null;
+const billInput=document.getElementById('billInput'),amtInput=document.getElementById('amtInput');
+const dtInput=document.getElementById('dtInput'),paidInput=document.getElementById('paidInput');
+const calcBtn=document.getElementById('calcBtn'),rows=document.getElementById('rows'),summary=document.getElementById('summary');
+
+dtInput.addEventListener('input',function(){let p=this.selectionStart,v=this.value.replace(/\D/g,'').slice(0,8);if(v.length>4)v=`${v.slice(0,2)}/${v.slice(2,4)}/${v.slice(4)}`;else if(v.length>2)v=`${v.slice(0,2)}/${v.slice(2)}`;this.value=v;if(p===3||p===6)p++;this.setSelectionRange(p,p);});
+billInput.addEventListener('input',()=>{clearTimeout(billInput._t);billInput._t=setTimeout(()=>{const val=billInput.value.trim();checkBillSound(val);if(val.length>=3&&gs('billUrl'))fetchBillData(val);},600);});
+amtInput.addEventListener('input',calc);dtInput.addEventListener('input',calc);paidInput.addEventListener('input',calc);
+[billInput,amtInput,dtInput,paidInput,calcBtn].forEach((el,idx,arr)=>{el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(idx>=3)calc();arr[(idx+1)%arr.length].focus();}});});
+
+function parseDate(s){if(!s||s.length<8)return null;const[d,m,y]=s.split('/');const dt=new Date(+y,+m-1,+d);return isNaN(dt)?null:dt;}
+function getTotalMonths(start,today){if(!start||today<start)return 0;let m=(today.getFullYear()-start.getFullYear())*12+(today.getMonth()-start.getMonth());if(today.getDate()>=start.getDate())m++;return Math.max(0,m);}
+
+function calc(){
+  if(!dtInput.value||!amtInput.value)return;const start=parseDate(dtInput.value);if(!start)return;
+  const today=new Date();today.setHours(0,0,0,0);const tm=getTotalMonths(start,today);
+  let paid=Math.min(+paidInput.value||0,tm);const due=tm-paid,amt=+amtInput.value||0;let interest=0;
+  if(gs('interestOn')==='true'){const im=gs('intMode'),r1=+gs('r1'),r2=+gs('r2');if(im==='two'){const m1=Math.min(due,Math.max(0,6-paid));interest=(amt*m1*r1/100)+(amt*(due-m1)*r2/100);}else if(im==='one'){interest=amt*due*r2/100;}if(gs('extraOn')==='true'&&due>=6)interest+=+gs('extraVal');}
+  const total=amt+interest;cur={a:amt,m:due,i:interest,total,bill:billInput.value.trim()||'N/A'};
+  const showInt=isAdmin()||gs('publicInterest')==='true',bm='bm-'+gs('blinkMode');
+  document.getElementById('result').innerHTML=`<div style="background:${gs('invoiceBg')};color:${gs('invoiceColor')};font-size:${gs('invoiceFont')}px;font-family:${gs('fontFamily')};padding:14px;text-align:center;border-radius:12px;"><div class="invoice-details"><span>Bill: <b>${cur.bill}</b></span><span>Date: ${dtInput.value}</span><span>Due: ${due}m | Paid: ${paid}m</span><span>Loan: ₹${amt.toLocaleString('en-IN')}</span>${showInt?`<span>Interest: ₹${interest.toFixed(2)}</span>`:''}<b class="${bm}" style="display:inline-block;font-size:1.35em;margin-top:6px;color:${gs('invoiceColor')};">TOTAL: ₹${total.toFixed(2)}</b></div></div>`;
+  playSound('calc');
+}
+
+function addLoan(){if(!cur)return;loans.push({...cur});render();playSound('add');billInput.value='';amtInput.value='';dtInput.value='';paidInput.value='';document.getElementById('result').innerHTML='';cur=null;billInput.focus();}
+
+function render(){
+  rows.innerHTML='';let tl=0,ti=0;const adm=isAdmin(),showDel=adm||gs('publicDelete')==='true',showInt=adm||gs('publicInterest')==='true',bm='bm-'+gs('blinkMode');
+  const thead=document.getElementById('tableHead');if(thead)thead.innerHTML=`<th>Bill No</th><th>Loan</th><th>Due</th>${showInt?'<th>Interest</th>':''}<th>Total</th><th>${showDel?'✕':''}</th>`;
+  loans.forEach((l,i)=>{tl+=l.a;ti+=l.i;const tr=document.createElement('tr');tr.innerHTML=`<td>${l.bill}</td><td>₹${l.a.toLocaleString('en-IN')}</td><td>${l.m}m</td>${showInt?`<td>₹${l.i.toFixed(2)}</td>`:''}<td>₹${l.total.toFixed(2)}</td><td>${showDel?`<button onclick="del(${i})" style="padding:3px 8px;font-size:12px;margin-top:0;background:linear-gradient(135deg,#f44336,#b71c1c);">✕</button>`:'—'}</td>`;attachHover(tr);rows.appendChild(tr);});
+  summary.innerHTML=loans.length?`<div class="total-box"><span class="loan-total">Loan: ₹${tl.toLocaleString('en-IN')}</span>${showInt?`<span class="loan-interest">Interest: ₹${ti.toFixed(2)}</span>`:''}<span class="grand-total ${bm}">GRAND TOTAL: ₹${(tl+ti).toFixed(2)}</span></div>`:'';
+}
+
+function del(i){loans.splice(i,1);render();playSound('del');}
+
+function admin(){if(isAdmin()){const s=document.getElementById('settings');s.classList.toggle('hidden');if(!s.classList.contains('hidden'))loadForm();return;}const entered=prompt('Enter Admin Password:');if(entered===null)return;if(entered!==gs('pass')){alert('❌ Wrong password!');return;}LS.s('isAdminMode','true');applyModeUI();document.getElementById('settings').classList.remove('hidden');loadForm();}
+function adminLogout(){LS.s('isAdminMode','false');document.getElementById('settings').classList.add('hidden');applyModeUI();alert('Logged out.');}
+
+function loadForm(){
+  const SKIP=['pass','publicBillFetch','publicInterest','publicWhatsapp','publicGpay','publicPrint','publicDelete','blinkMode','blinkColor1','blinkColor2','blinkSpeed','cellMode','hoverColor1','hoverColor2','dateColor','billInputColor','amtInputColor','dtInputColor'];
+  Object.keys(D).forEach(k=>{if(SKIP.includes(k))return;const inp=document.getElementById(k+'Input');if(!inp)return;inp.type==='checkbox'?inp.checked=(gs(k)==='true'):inp.value=gs(k);});
+  document.getElementById('newPassInput').value='';
+  const e=id=>document.getElementById(id);
+  if(e('blinkModeInput'))e('blinkModeInput').value=gs('blinkMode');
+  if(e('blinkColor1Input'))e('blinkColor1Input').value=gs('blinkColor1');
+  if(e('blinkColor2Input'))e('blinkColor2Input').value=gs('blinkColor2');
+  if(e('blinkSpeedInput')){e('blinkSpeedInput').value=gs('blinkSpeed');const lbl=e('speedLabel');if(lbl)lbl.textContent=(+gs('blinkSpeed')/1000).toFixed(1)+'s';}
+  if(e('cellModeInput'))e('cellModeInput').value=gs('cellMode');
+  if(e('hoverColor1Input'))e('hoverColor1Input').value=gs('hoverColor1');
+  if(e('hoverColor2Input'))e('hoverColor2Input').value=gs('hoverColor2');
+  if(e('dateColorInput'))e('dateColorInput').value=gs('dateColor');
+  previewBlink();previewCell();loadSwitches();
+  buildPicker('calcPicker','calc');buildPicker('addPicker','add');buildPicker('delPicker','del');
+  ['calc','add','del'].forEach(a=>{const s=gs('sound_'+a);if(s){try{selectedSounds[a]=JSON.parse(s);updLbl(a);}catch(e){}}});
+  renderBSList();buildGradSwatches();const su=e('shareUrl');if(su)su.textContent=location.href.split('?')[0];
+  // Sync preview button to saved gradient
+  const pb=document.getElementById('gradPreviewBtn');if(pb)pb.style.background='linear-gradient(135deg,'+gs('gradStart')+','+gs('gradEnd')+')';
+}
+
+function saveSettings(){
+  const backup={};Object.keys(D).forEach(k=>backup[k]=gs(k));LS.s('_hist',JSON.stringify(backup));
+  const np=document.getElementById('newPassInput')?.value.trim();if(np)LS.s('pass',np);
+  const SKIP=['pass','publicBillFetch','publicInterest','publicWhatsapp','publicGpay','publicPrint','publicDelete','blinkMode','blinkColor1','blinkColor2','blinkSpeed','cellMode','hoverColor1','hoverColor2','dateColor'];
+  Object.keys(D).forEach(k=>{if(SKIP.includes(k))return;const inp=document.getElementById(k+'Input');if(!inp)return;LS.s(k,inp.type==='checkbox'?String(inp.checked):inp.value);});
+  const e=id=>document.getElementById(id);
+  if(e('blinkModeInput'))LS.s('blinkMode',e('blinkModeInput').value);
+  if(e('blinkColor1Input'))LS.s('blinkColor1',e('blinkColor1Input').value);
+  if(e('blinkColor2Input'))LS.s('blinkColor2',e('blinkColor2Input').value);
+  if(e('blinkSpeedInput'))LS.s('blinkSpeed',e('blinkSpeedInput').value);
+  if(e('cellModeInput'))LS.s('cellMode',e('cellModeInput').value);
+  if(e('hoverColor1Input'))LS.s('hoverColor1',e('hoverColor1Input').value);
+  if(e('hoverColor2Input'))LS.s('hoverColor2',e('hoverColor2Input').value);
+  if(e('dateColorInput'))LS.s('dateColor',e('dateColorInput').value);
+  if(e('billInputColorInput'))LS.s('billInputColor',e('billInputColorInput').value);
+  if(e('amtInputColorInput'))LS.s('amtInputColor',e('amtInputColorInput').value);
+  if(e('dtInputColorInput'))LS.s('dtInputColor',e('dtInputColorInput').value);
+  saveSwitches();LS.s('sound_calc',JSON.stringify(selectedSounds.calc));LS.s('sound_add',JSON.stringify(selectedSounds.add));LS.s('sound_del',JSON.stringify(selectedSounds.del));saveBillSounds();
+  applyVars();applyModeUI();render();alert('✅ Settings Saved!\nNow click PUSH ALL to sync all mobiles.');document.getElementById('settings').classList.add('hidden');
+}
+
+
+/* ===== 50 GRADIENT SHADES ===== */
+const GRAD50 = [
+  // Greens (1-10) — dark to light
+  ['#064e3b','#10b981'],['#065f46','#34d399'],['#14532d','#4ade80'],['#166534','#86efac'],
+  ['#15803d','#bbf7d0'],['#16a34a','#dcfce7'],['#1a7a30','#a3e635'],['#365314','#84cc16'],
+  ['#4d7c0f','#d9f99d'],['#166534','#6ee7b7'],
+  // Blue-Greens / Teals (11-15)
+  ['#0f766e','#5eead4'],['#0e7490','#67e8f9'],['#155e75','#a5f3fc'],['#0369a1','#38bdf8'],['#1e40af','#93c5fd'],
+  // Blues (16-20)
+  ['#1e3a8a','#60a5fa'],['#1d4ed8','#93c5fd'],['#0047b3','#3b82f6'],['#1e40af','#bfdbfe'],['#0c4a6e','#7dd3fc'],
+  // Purples (21-25)
+  ['#3b0764','#a855f7'],['#4c1d95','#c084fc'],['#5b21b6','#ddd6fe'],['#6b21a8','#e879f9'],['#701a75','#f0abfc'],
+  // Pinks / Reds (26-30)
+  ['#831843','#f472b6'],['#9f1239','#fb7185'],['#7f1d1d','#fca5a5'],['#991b1b','#fcd34d'],['#92400e','#fbbf24'],
+  // Oranges / Yellows (31-35)
+  ['#7c2d12','#fb923c'],['#b45309','#fde68a'],['#78350f','#fcd34d'],['#713f12','#fef08a'],['#854d0e','#fef9c3'],
+  // Red-Orange (36-38)
+  ['#b91c1c','#f87171'],['#c2410c','#fb923c'],['#b45309','#facc15'],
+  // Dark / Black (39-41)
+  ['#111827','#374151'],['#0f172a','#1e293b'],['#18181b','#27272a'],
+  // Gold / Bronze (42-44)
+  ['#78350f','#d97706'],['#92400e','#b45309'],['#713f12','#a16207'],
+  // Neon / Vivid (45-50)
+  ['#064e3b','#00ff88'],['#0047b3','#00d4ff'],['#4c1d95','#ff00ff'],
+  ['#7f1d1d','#ff6b6b'],['#134e4a','#06d6a0'],['#0c4a6e','#38bdf8']
+];
+
+let activeGradIdx = -1;
+
+function buildGradSwatches(){
+  const container = document.getElementById('gradSwatches');
+  if(!container) return;
+  container.innerHTML = '';
+  GRAD50.forEach((g, i) => {
+    const div = document.createElement('div');
+    div.className = 'grad-swatch' + (activeGradIdx === i ? ' active' : '');
+    div.style.background = 'linear-gradient(135deg,' + g[0] + ',' + g[1] + ')';
+    div.title = 'Shade ' + (i+1) + ': ' + g[0] + ' → ' + g[1];
+    div.innerHTML = '<span class="swatch-num">' + (i+1) + '</span>';
+    div.onclick = () => applyGradSwatch(i);
+    container.appendChild(div);
+  });
+}
+
+function applyGradSwatch(idx){
+  activeGradIdx = idx;
+  const [s, e] = GRAD50[idx];
+  LS.s('gradStart', s); LS.s('gradEnd', e);
+  document.documentElement.style.setProperty('--grad', 'linear-gradient(135deg,' + s + ',' + e + ')');
+  // Update preview button
+  const pb = document.getElementById('gradPreviewBtn');
+  if(pb) pb.style.background = 'linear-gradient(135deg,' + s + ',' + e + ')';
+  // Update custom color inputs
+  const si = document.getElementById('gradStartInput');
+  const ei = document.getElementById('gradEndInput');
+  if(si) si.value = s;
+  if(ei) ei.value = e;
+  // Highlight active swatch
+  document.querySelectorAll('.grad-swatch').forEach((el,i) => {
+    el.classList.toggle('active', i === idx);
+  });
+}
+
+function applyGradCustom(){
+  const s = document.getElementById('gradStartInput')?.value;
+  const e = document.getElementById('gradEndInput')?.value;
+  if(!s || !e) return;
+  LS.s('gradStart', s); LS.s('gradEnd', e);
+  document.documentElement.style.setProperty('--grad', 'linear-gradient(135deg,' + s + ',' + e + ')');
+  const pb = document.getElementById('gradPreviewBtn');
+  if(pb) pb.style.background = 'linear-gradient(135deg,' + s + ',' + e + ')';
+  // Deselect all swatches (custom mode)
+  activeGradIdx = -1;
+  document.querySelectorAll('.grad-swatch').forEach(el => el.classList.remove('active'));
+}
+
+function undoLastChange(){const j=LS.g('_hist');if(!j){alert('No backup!');return;}const s=JSON.parse(j);Object.keys(s).forEach(k=>LS.s(k,s[k]));loadForm();applyVars();applyModeUI();render();alert('✅ Restored!');}
+function openPay(){const t=loans.reduce((s,l)=>s+l.total,0);if(!t){alert('No loans!');return;}const upi=gs('upiId');if(!upi){alert('Set UPI ID in settings!');return;}window.open(`upi://pay?pa=${upi}&am=${t.toFixed(2)}&cu=INR&tn=LoanPro`);}
+function sendWhatsApp(){if(!loans.length){alert('No loans!');return;}const showInt=isAdmin()||gs('publicInterest')==='true';let msg='💰 *LoanPro Statement*\n\n';loans.forEach(l=>{msg+=`📋 *${l.bill}*\nLoan: ₹${l.a.toLocaleString('en-IN')}\nDue: ${l.m} months\n`;if(showInt)msg+=`Interest: ₹${l.i.toFixed(2)}\n`;msg+=`*Total: ₹${l.total.toFixed(2)}*\n\n`;});msg+=`💎 *GRAND TOTAL: ₹${loans.reduce((s,l)=>s+l.total,0).toFixed(2)}*`;window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);}
+function printInvoice(){window.print();}
+function copyShareUrl(){const url=location.href.split('?')[0];if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>alert('✅ Link copied!'));else prompt('Copy:',url);}
+function sendBulkNotice(){if(gs('noticeOn')!=='true'||!gs('noticeUrl')){alert('Enable + set URL!');return;}fetch(gs('noticeUrl')).then(r=>r.text()).then(t=>alert('Sent! '+t)).catch(e=>alert('Failed: '+e));}
+
+calcBtn.onclick=calc;
+document.addEventListener('DOMContentLoaded',()=>{
+  loadBillSounds();applyVars();applyModeUI();render();
+  ['calc','add','del'].forEach(a=>{const s=gs('sound_'+a);if(s){try{selectedSounds[a]=JSON.parse(s);}catch(e){}}});
+  document.getElementById('dateColorInput')?.addEventListener('input',liveDate);
+  // Apply saved input field colours on load
+  const _bi=document.getElementById('billInput');
+  const _ai=document.getElementById('amtInput');
+  const _di=document.getElementById('dtInput');
+  if(_bi)_bi.style.borderColor=gs('billInputColor');
+  if(_ai)_ai.style.borderColor=gs('amtInputColor');
+  if(_di)_di.style.borderColor=gs('dtInputColor');
+  fetchSettingsFromSheet();
+  if(gs('fetchOn')==='true'&&!isAdmin())setInterval(fetchSettingsFromSheet,30000);
+});
+</script>
+</body>
+</html>
